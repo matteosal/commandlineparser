@@ -252,19 +252,7 @@ NumericSpec[name_, type_, doc_, OptionsPattern[]] := Module[
 	];
 	postCheck = With[{checks = checks}, Function[{val}, And @@ Map[#[val]&, checks]]];
 
-	outputDoc = If[StringEndsQ[doc, "."], doc, doc <> "."];
-	specDoc = If[type === "Integer", "Must be an integer number", "Must be a real number"];
-	If[interval =!= {-Infinity, Infinity},
-		specDoc = specDoc <> " between " <> ToString[First @ interval] <> " and " <>
-			ToString[Last @ interval]
-	];
-	specDoc = If[allowInf,
-		specDoc <> ", Infinity is allowed.",
-		specDoc <> ", Infinity is not allowed."
-	];
-	outputDoc = appendDocSpec[outputDoc, specDoc];
-
-	{name, patt, outputDoc, "Parser" -> parser, "PostCheck" -> postCheck, 
+	{name, patt, doc, "Parser" -> parser, "PostCheck" -> postCheck, 
 		"Variadic" -> OptionValue["Variadic"]}
 ];
 
@@ -272,7 +260,7 @@ Options[StringSpec] = {"Variadic" -> False};
 StringSpec[name_, doc_, OptionsPattern[]] := {
 	name, 
 	___, 
-	appendDocSpec[doc, "Can be any string"], 
+	doc, 
 	"Parser" -> Identity, "Variadic" -> OptionValue["Variadic"]
 }
 
@@ -280,7 +268,7 @@ Options[BooleanSpec] = {"Variadic" -> False};
 BooleanSpec[name_, doc_, OptionsPattern[]] := {
 	name, 
 	"true"|"false"|"True"|"False", 
-	appendDocSpec[doc, "Must be a boolean."], 
+	doc, 
 	"Parser" -> Function[Replace[#, {"true"|"True" -> True, "false"|"False" -> False}]],
 	"Variadic" -> OptionValue["Variadic"]
 }
@@ -296,10 +284,7 @@ EnumSpec[name_, values_, doc_, OptionsPattern[]] := Module[
 	];
 	patt = Alternatives @@ Keys[replacements];
 	parser = With[{r = replacements}, Function[Replace[#, r]]];
-	specDoc = "Must be one of " <> StringRiffle[ToString /@ values, "|"] <> 
-		" or their lower case equivalents";
-	outputDoc = appendDocSpec[doc, specDoc];
-	{name, patt, outputDoc, "Parser" -> parser, "Variadic" -> OptionValue["Variadic"]}
+	{name, patt, doc, "Parser" -> parser, "Variadic" -> OptionValue["Variadic"]}
 ]
 
 RepeatedSpec[singleSpec_, separator_, doc_] := Module[
@@ -324,11 +309,6 @@ RepeatedSpec[singleSpec_, separator_, doc_] := Module[
 		"PostCheck" -> With[{c = singleCheck}, Function[And @@ Map[c, #]]]
 	}
 ]
-
-appendDocSpec[doc_, spec_] := StringJoin[
-	If[StringEndsQ[doc, "."], doc, doc <> "."], " ", spec
-]
-
 
 $helpMsg = "Please add the flag --help for documentation.";
 ParseCommandLine::badopts = "Optional arguments were not correctly formatted: ``.";
