@@ -2,6 +2,11 @@ BeginPackage["CommandLineParser`"];
 
 ParseCommandLine;
 
+NumericSpec;
+StringSpec;
+BooleanSpec;
+EnumSpec;
+
 Begin["`Private`"];
 
 (******************************************************************)
@@ -158,7 +163,88 @@ printHelp[posSpecs_, optSpecs_, helpHeader_] := Module[{maxNameLen, maxDefLen},
 	];
 ]
 
-$helpMsg = "Add --help for documentation.";
+(******************************************************************)
+(************************** SPEC HELPERS **************************)
+(******************************************************************)
+
+Options[NumericSpec] = {
+	"Interval" -> {-Infinity, Infinity},
+	"AllowInfinity" -> False
+};
+NumericSpec[name_, type_, doc_, OptionsPattern[]] := Module[
+	{interval, allowInf, patt, parser, checks, postCheck},
+	{interval, allowInf} = {OptionValue["Interval"], OptionValue["AllowInfinity"]};
+	patt = If[allowInf, 
+		Alternatives[NumberString, "infinity", "Infinity", "-infinity", "-Infinity"],
+		NumberString
+	];
+	parser = Function @ Replace[#, 
+		{
+			"infinity"|"Infinity" -> Infinity,
+			"-infinity"|"-Infinity" -> -Infinity,
+			n_ :> ToExpression[n]
+		}
+	];
+
+	checks = With[{interval = interval},
+		{IntervalMemberQ[Interval[interval], #]&}
+	];
+	Which[
+		type === "Integer" && allowInf,
+			AppendTo[checks, 
+				Function[IntegerQ[#] || MatchQ[#, DirectedInfinity[-1|1]]]
+			],
+		type === "Integer",
+			AppendTo[checks, Function[IntegerQ[#]]]
+	];
+	postCheck = With[{checks = checks}, Function[{val}, And @@ Map[#[val]&, checks]]];
+
+	outputDoc = If[StringEndsQ[doc, "."], doc, doc <> "."];
+	specDoc = If[type === "Integer", "Must be an integer number", "Must be a real number"];
+	If[interval =!= {-Infinity, Infinity},
+		specDoc = specDoc <> " between " <> ToString[First @ interval] <> " and " <>
+			ToString[Last @ interval]
+	];
+	specDoc = If[allowInf,
+		specDoc <> ", Infinity is allowed.",
+		specDoc <> ", Infinity is not allowed."
+	];
+	outputDoc = appendDocSpec[outputDoc, specDoc];
+
+	{name, patt, outputDoc, "Parser" -> parser, "PostCheck" -> postCheck}
+];
+
+StringSpec[name_, doc_] := {name, _, appendDocSpec[doc, "Can be any string"], 
+	"Parser" -> Identity}
+
+BooleanSpec[name_, doc_] := {
+	name, 
+	"true"|"false"|"True"|"False", 
+	appendDocSpec[doc, "Must be a boolean."], 
+	"Parser" -> Function[Replace[#, {"true"|"True" -> True, "false"|"False" -> False}]]
+}
+
+EnumSpec[name_, values_, doc_] := Module[{replacements, patt, parser, specDoc, outputDoc},
+	replacements = Map[
+		With[{s = ToString[#]},
+			Apply[Alternatives, DeleteDuplicates[{s, Capitalize[s], Decapitalize[s]}]] -> #
+		]&,
+		values
+	];
+	patt = Alternatives @@ Keys[replacements];
+	parser = With[{r = replacements}, Function[Replace[#, r]]];
+	specDoc = "Must be one of " <> StringRiffle[ToString /@ values, "|"] <> 
+		" or their lower case equivalents";
+	outputDoc = appendDocSpec[doc, specDoc];
+	{name, patt, outputDoc, "Parser" -> parser}
+]
+
+appendDocSpec[doc_, spec_] := StringJoin[
+	If[StringEndsQ[doc, "."], doc, doc <> "."], " ", spec
+]
+
+
+$helpMsg = "Please add the flag --help for documentation.";
 ParseCommandLine::badopts = "Optional arguments were not correctly formatted: ``";
 ParseCommandLine::clfail = "Could not access the command line.";
 ParseCommandLine::failcheck = "`` argument `` was parsed to ``, which is an invalid value. Documentation string for the argument is: \"``\"";
