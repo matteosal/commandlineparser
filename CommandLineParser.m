@@ -46,14 +46,23 @@ ParseCommandLine[{posSpecsRaw_, optSpecsRaw_, helpHeader_}, args_] := Module[
 	{posParsed, optsParsed}
 ];
 
-checkRawSpecs[{pos_, opt_}] := Module[{},
+checkRawSpecs[{pos_, opt_}] := Module[{variadicPos},
 	Scan[checkRawSpec[#, False]&, pos];
-	Scan[checkRawSpec[#, True]&, opt];	
+	Scan[checkRawSpec[#, True]&, opt];
+	variadicPos = Position[pos, "Variadic" -> True, {2}];
+	If[
+		Or[
+			Length[variadicPos] > 1,
+			Length[variadicPos] === 1 && variadicPos[[1, 1]] =!= Length[pos]
+		],
+		Message[ParseCommandLine::badvariadic];
+		Abort[]
+	]
 ]
 
 checkRawSpec[spec_, isOpt_] := Module[{test},
 	test = And[
-		3 <= Length[spec] <= 5,
+		3 <= Length[spec] <= 3 + Length[Options[toSpec]],
 		Developer`EmptyQ @ Complement[
 			Keys @ Cases[spec, HoldPattern[s_ -> _]], 
 			Keys @ Options[toSpec]
@@ -69,7 +78,8 @@ checkRawSpec[spec_, isOpt_] := Module[{test},
 	]
 ];
 
-Options[toSpec] = {"Parser" -> ToExpression, "PostCheck" -> Function[True]};
+Options[toSpec] = {"Parser" -> ToExpression, "PostCheck" -> Function[True], 
+	"Variadic" -> False};
 
 toSpec[name_, patt_, doc_, OptionsPattern[]] := Module[{name2, addDefault, default, res},
 	If[ListQ[name],
@@ -79,20 +89,36 @@ toSpec[name_, patt_, doc_, OptionsPattern[]] := Module[{name2, addDefault, defau
 		addDefault = False
 	];
 	res = <|"Name" -> name2, "StringPattern" -> patt, "Documentation" -> doc, 
-		"Parser" -> OptionValue["Parser"], "PostCheck" -> OptionValue["PostCheck"]|>;
+		"Parser" -> OptionValue["Parser"], "PostCheck" -> OptionValue["PostCheck"],
+		"Variadic" -> OptionValue["Variadic"]|>;
 	If[addDefault,
 		Append[res, "Default" -> default],
 		res
 	]
 ]
 
-parsePosArgs[specs_, posArgs_] := (
-	If[Length[posArgs] =!= Length[specs],
-		Message[ParseCommandLine::poslen, Length[posArgs], Length[specs]];
+parsePosArgs[specs_, posArgs_] := Module[{isVariadic, specs2, parsed, most, variadic},
+	isVariadic = specs[[-1, "Variadic"]];
+	If[
+		Or[
+			!isVariadic && Length[posArgs] =!= Length[specs],
+			isVariadic && Length[posArgs] < Length[specs] - 1
+		],
+		Message[ParseCommandLine::poslen, Length[posArgs], 
+			If[isVariadic, "at least " <> ToString[Length[specs]], Length[specs]]];
 		Abort[]
 	];
-	MapThread[parseSingle, {specs, posArgs, Range @ Length[specs]}]
-);
+	specs2 = If[isVariadic,
+		PadRight[specs, Length[posArgs], Last[specs]],
+		specs
+	];
+	parsed = MapThread[parseSingle, {specs2, posArgs, Range @ Length[specs2]}];
+	If[isVariadic,
+		{most, variadic} = TakeDrop[parsed, Length[specs] - 1];
+		parsed = Append[most, variadic]
+	];
+	parsed
+];
 
 parseOptArgs[specs_, optArgs_] := Module[{provided, providedAssoc, unknown},
 	provided = Transpose @ StringReplace[optArgs, 
@@ -193,7 +219,8 @@ printHelp[posSpecs_, optSpecs_, helpHeader_] := Module[{maxNameLen, maxDefLen},
 
 Options[NumericSpec] = {
 	"Interval" -> {-Infinity, Infinity},
-	"AllowInfinity" -> False
+	"AllowInfinity" -> False,
+	"Variadic" -> False
 };
 NumericSpec[name_, type_, doc_, OptionsPattern[]] := Module[
 	{interval, allowInf, patt, parser, checks, postCheck},
@@ -235,20 +262,30 @@ NumericSpec[name_, type_, doc_, OptionsPattern[]] := Module[
 	];
 	outputDoc = appendDocSpec[outputDoc, specDoc];
 
-	{name, patt, outputDoc, "Parser" -> parser, "PostCheck" -> postCheck}
+	{name, patt, outputDoc, "Parser" -> parser, "PostCheck" -> postCheck, 
+		"Variadic" -> OptionValue["Variadic"]}
 ];
 
-StringSpec[name_, doc_] := {name, _, appendDocSpec[doc, "Can be any string"], 
-	"Parser" -> Identity}
+Options[StringSpec] = {"Variadic" -> False};
+StringSpec[name_, doc_, OptionsPattern[]] := {
+	name, 
+	___, 
+	appendDocSpec[doc, "Can be any string"], 
+	"Parser" -> Identity, "Variadic" -> OptionValue["Variadic"]
+}
 
-BooleanSpec[name_, doc_] := {
+Options[BooleanSpec] = {"Variadic" -> False};
+BooleanSpec[name_, doc_, OptionsPattern[]] := {
 	name, 
 	"true"|"false"|"True"|"False", 
 	appendDocSpec[doc, "Must be a boolean."], 
-	"Parser" -> Function[Replace[#, {"true"|"True" -> True, "false"|"False" -> False}]]
+	"Parser" -> Function[Replace[#, {"true"|"True" -> True, "false"|"False" -> False}]],
+	"Variadic" -> OptionValue["Variadic"]
 }
 
-EnumSpec[name_, values_, doc_] := Module[{replacements, patt, parser, specDoc, outputDoc},
+Options[EnumSpec] = {"Variadic" -> False};
+EnumSpec[name_, values_, doc_, OptionsPattern[]] := Module[
+	{replacements, patt, parser, specDoc, outputDoc},
 	replacements = Map[
 		With[{s = ToString[#]},
 			Apply[Alternatives, DeleteDuplicates[{s, Capitalize[s], Decapitalize[s]}]] -> #
@@ -260,7 +297,7 @@ EnumSpec[name_, values_, doc_] := Module[{replacements, patt, parser, specDoc, o
 	specDoc = "Must be one of " <> StringRiffle[ToString /@ values, "|"] <> 
 		" or their lower case equivalents";
 	outputDoc = appendDocSpec[doc, specDoc];
-	{name, patt, outputDoc, "Parser" -> parser}
+	{name, patt, outputDoc, "Parser" -> parser, "Variadic" -> OptionValue["Variadic"]}
 ]
 
 appendDocSpec[doc_, spec_] := StringJoin[
@@ -270,7 +307,8 @@ appendDocSpec[doc_, spec_] := StringJoin[
 
 $helpMsg = "Please add the flag --help for documentation.";
 ParseCommandLine::badopts = "Optional arguments were not correctly formatted: ``.";
-ParseCommandLine::badspec = "`` argument specification `` is not valid."
+ParseCommandLine::badspec = "`` argument specification `` is not valid.";
+ParseCommandLine::badvariadic = "Invalid argument specification: only one positional argument can be variadic and must appear as the end of the positional argument specification.";
 ParseCommandLine::clfail = "Could not access the command line.";
 ParseCommandLine::failcheck = "`` argument `` was parsed to ``, which is an invalid value. Documentation string for the argument is: \"``\".";
 ParseCommandLine::nomatch = "`` argument `` was ``, which is an invalid value. Documentation string for the argument is: \"``\".";
