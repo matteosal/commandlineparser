@@ -26,6 +26,7 @@ ParseCommandLine[{posSpecsRaw_, optSpecsRaw_, helpHeader_}, args_] := Module[
 		Message[ParseCommandLine::nostring];
 		Abort[];
 	];
+	checkRawSpecs[{posSpecsRaw, optSpecsRaw}];
 	{posSpecs, optSpecs} = {toSpec @@@ posSpecsRaw, toSpec @@@ optSpecsRaw};
 	If[MemberQ[args, "--help"],
 		printHelp @@ {posSpecs, optSpecs, helpHeader};
@@ -43,6 +44,29 @@ ParseCommandLine[{posSpecsRaw_, optSpecsRaw_, helpHeader_}, args_] := Module[
 	optsParsed = parseOptArgs[optSpecs, optArgs];
 
 	{posParsed, optsParsed}
+];
+
+checkRawSpecs[{pos_, opt_}] := Module[{},
+	Scan[checkRawSpec[#, False]&, pos];
+	Scan[checkRawSpec[#, True]&, opt];	
+]
+
+checkRawSpec[spec_, isOpt_] := Module[{test},
+	test = And[
+		3 <= Length[spec] <= 5,
+		Developer`EmptyQ @ Complement[
+			Keys @ Cases[spec, HoldPattern[s_ -> _]], 
+			Keys @ Options[toSpec]
+		],
+		If[isOpt,
+			MatchQ[First @ spec, {_?StringQ, _?StringQ}],
+			MatchQ[First @ spec, _?StringQ]		
+		]
+	];
+	If[!test,
+		Message[ParseCommandLine::badspec, If[isOpt, "Optional", "Positional"], spec];
+		Abort[]
+	]
 ];
 
 Options[toSpec] = {"Parser" -> ToExpression, "PostCheck" -> Function[True]};
@@ -245,10 +269,11 @@ appendDocSpec[doc_, spec_] := StringJoin[
 
 
 $helpMsg = "Please add the flag --help for documentation.";
-ParseCommandLine::badopts = "Optional arguments were not correctly formatted: ``";
+ParseCommandLine::badopts = "Optional arguments were not correctly formatted: ``.";
+ParseCommandLine::badspec = "`` argument specification `` is not valid."
 ParseCommandLine::clfail = "Could not access the command line.";
-ParseCommandLine::failcheck = "`` argument `` was parsed to ``, which is an invalid value. Documentation string for the argument is: \"``\"";
-ParseCommandLine::nomatch = "`` argument `` was ``, which is an invalid value. Documentation string for the argument is: \"``\"";
+ParseCommandLine::failcheck = "`` argument `` was parsed to ``, which is an invalid value. Documentation string for the argument is: \"``\".";
+ParseCommandLine::nomatch = "`` argument `` was ``, which is an invalid value. Documentation string for the argument is: \"``\".";
 ParseCommandLine::nostring = "Provided argument list was not a list of strings.";
 ParseCommandLine::poslen = "`` positional arguments were passed but specification requires ``. " <> $helpMsg;
 ParseCommandLine::unkopt = "Unkown options ``. " <> $helpMsg;
