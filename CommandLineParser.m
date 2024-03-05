@@ -123,7 +123,8 @@ parsePosArgs[specs_, posArgs_] := Module[{isVariadic, specs2, parsed, most, vari
 parseOptArgs[specs_, optArgs_] := Module[{provided, providedAssoc, unknown},
 	provided = Transpose @ StringReplace[optArgs, 
 		{
-			"--" ~~ name__ ~~ "=" ~~ val__ :> {name, val}, 
+			"--" ~~ name__ ~~ "=" ~~ val__ :> {name, val},
+			"--" ~~ name__ :> {name, "True"},
 			_ :> (Message[ParseCommandLine::badopts, optArgs]; Abort[];)
 		}
 	][[All, 1]];
