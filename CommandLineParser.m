@@ -28,7 +28,7 @@ ParseCommandLine[{posSpecsRaw_, optSpecsRaw_, helpHeader_}, args_] := Module[
 		Abort[];
 	];
 	checkRawSpecs[{posSpecsRaw, optSpecsRaw}];
-	{posSpecs, optSpecs} = {toSpec @@@ posSpecsRaw, toSpec @@@ optSpecsRaw};
+	{posSpecs, optSpecs} = {toSpec /@ posSpecsRaw, toSpec /@ optSpecsRaw};
 	If[MemberQ[args, "--help"],
 		printHelp @@ {posSpecs, optSpecs, helpHeader};
 		Exit[0]
@@ -50,7 +50,7 @@ ParseCommandLine[{posSpecsRaw_, optSpecsRaw_, helpHeader_}, args_] := Module[
 checkRawSpecs[{pos_, opt_}] := Module[{variadicPos},
 	Scan[checkRawSpec[#, False]&, pos];
 	Scan[checkRawSpec[#, True]&, opt];
-	variadicPos = Position[pos, "Variadic" -> True, {2}];
+	variadicPos = Position[pos, "Variadic" -> True, {3}];
 	If[
 		Or[
 			Length[variadicPos] > 1,
@@ -61,16 +61,16 @@ checkRawSpecs[{pos_, opt_}] := Module[{variadicPos},
 	]
 ]
 
-checkRawSpec[spec_, isOpt_] := Module[{test},
+checkRawSpec[spec:Rule[name_, data_], isOpt_] := Module[{test},
 	test = And[
-		3 <= Length[spec] <= 3 + Length[Options[toSpec]],
+		2 <= Length[data] <= 2 + Length[Options[toSpec2]],
 		Developer`EmptyQ @ Complement[
-			Keys @ Cases[spec, HoldPattern[s_ -> _]], 
-			Keys @ Options[toSpec]
+			Keys @ Cases[data, HoldPattern[s_ -> _]], 
+			Keys @ Options[toSpec2]
 		],
 		If[isOpt,
-			MatchQ[First @ spec, {_?StringQ, _?StringQ}],
-			MatchQ[First @ spec, _?StringQ]		
+			MatchQ[name, {_?StringQ, _?StringQ}],
+			MatchQ[name, _?StringQ]		
 		]
 	];
 	If[!test,
@@ -78,11 +78,17 @@ checkRawSpec[spec_, isOpt_] := Module[{test},
 		Abort[]
 	]
 ];
+checkRawSpec[spec_, isOpt_] := (
+	Message[ParseCommandLine::badspec, If[isOpt, "Optional", "Positional"], spec];
+	Abort[]
+)
 
-Options[toSpec] = {"Parser" -> ToExpression, "PostCheck" -> Function[True], 
+toSpec[name_ -> data_] := Apply[toSpec2, Prepend[data, name]]
+
+Options[toSpec2] = {"Parser" -> ToExpression, "PostCheck" -> Function[True], 
 	"Variadic" -> False};
 
-toSpec[name_, patt_, doc_, OptionsPattern[]] := Module[{name2, addDefault, default, res},
+toSpec2[name_, patt_, doc_, OptionsPattern[]] := Module[{name2, addDefault, default, res},
 	If[ListQ[name],
 		{name2, default} = name;
 		addDefault = True,
@@ -224,7 +230,7 @@ Options[NumericSpec] = {
 	"AllowInfinity" -> False,
 	"Variadic" -> False
 };
-NumericSpec[name_, type_, doc_, OptionsPattern[]] := Module[
+NumericSpec[type_, doc_, OptionsPattern[]] := Module[
 	{interval, allowInf, patt, parser, checks, postCheck},
 	{interval, allowInf} = {OptionValue["Interval"], OptionValue["AllowInfinity"]};
 	patt = If[allowInf, 
@@ -252,21 +258,17 @@ NumericSpec[name_, type_, doc_, OptionsPattern[]] := Module[
 	];
 	postCheck = With[{checks = checks}, Function[{val}, And @@ Map[#[val]&, checks]]];
 
-	{name, patt, doc, "Parser" -> parser, "PostCheck" -> postCheck, 
+	{patt, doc, "Parser" -> parser, "PostCheck" -> postCheck, 
 		"Variadic" -> OptionValue["Variadic"]}
 ];
 
 Options[StringSpec] = {"Variadic" -> False};
-StringSpec[name_, doc_, OptionsPattern[]] := {
-	name, 
-	___, 
-	doc, 
-	"Parser" -> Identity, "Variadic" -> OptionValue["Variadic"]
+StringSpec[doc_, OptionsPattern[]] := {___, doc, "Parser" -> Identity, 
+	"Variadic" -> OptionValue["Variadic"]
 }
 
 Options[BooleanSpec] = {"Variadic" -> False};
-BooleanSpec[name_, doc_, OptionsPattern[]] := {
-	name, 
+BooleanSpec[doc_, OptionsPattern[]] := {
 	"true"|"false"|"True"|"False", 
 	doc, 
 	"Parser" -> Function[Replace[#, {"true"|"True" -> True, "false"|"False" -> False}]],
@@ -274,33 +276,25 @@ BooleanSpec[name_, doc_, OptionsPattern[]] := {
 }
 
 Options[EnumSpec] = {"Variadic" -> False};
-EnumSpec[name_, values_, doc_, OptionsPattern[]] := Module[
+EnumSpec[values_, doc_, OptionsPattern[]] := Module[
 	{replacements, patt, parser, specDoc, outputDoc},
 	replacements = Map[
 		With[{s = ToString[#]},
-			Apply[Alternatives, DeleteDuplicates[{s, Capitalize[s], Decapitalize[s]}]] -> #
+			Apply[Alternatives, {s, ToLowerCase[s]}] -> #
 		]&,
 		values
 	];
 	patt = Alternatives @@ Keys[replacements];
 	parser = With[{r = replacements}, Function[Replace[#, r]]];
-	{name, patt, doc, "Parser" -> parser, "Variadic" -> OptionValue["Variadic"]}
+	{patt, doc, "Parser" -> parser, "Variadic" -> OptionValue["Variadic"]}
 ]
 
 RepeatedSpec[singleSpec_, separator_, doc_] := Module[
-	{singleSpec2, useDefault, name, default, singlePatt, singleParser, singleCheck},
-	If[Length[singleSpec] === 2,
-		useDefault = True;
-		{singleSpec2, default} = singleSpec
-		,
-		useDefault = False;
-		singleSpec2 = singleSpec
-	];
-	{name, singlePatt} = Take[singleSpec2, 2];
-	singleParser = FirstCase[singleSpec2, HoldPattern["Parser" -> p_] :> p, ToExpression];
-	singleCheck = FirstCase[singleSpec2, HoldPattern["PostCheck" -> c_] :> c, True&];
+	{singlePatt, singleParser, singleCheck},
+	singlePatt = First[singleSpec];
+	singleParser = FirstCase[singleSpec, HoldPattern["Parser" -> p_] :> p, ToExpression];
+	singleCheck = FirstCase[singleSpec, HoldPattern["PostCheck" -> c_] :> c, True&];
 	{
-		If[useDefault, {name, default}, name],
 		(RepeatedNull[singlePatt ~~ separator] ~~ singlePatt) | "",
 		doc,
 		"Parser" -> With[{p = singleParser}, 
@@ -319,7 +313,7 @@ ParseCommandLine::failcheck = "`` argument `` was parsed to ``, which is an inva
 ParseCommandLine::nomatch = "`` argument `` was ``, which is an invalid value. Documentation string for the argument is: \"``\".";
 ParseCommandLine::nostring = "Provided argument list was not a list of strings.";
 ParseCommandLine::poslen = "`` positional arguments were passed but specification requires ``. " <> $helpMsg;
-ParseCommandLine::unkopt = "Unkown options ``. " <> $helpMsg;
+ParseCommandLine::unkopt = "Unknown options ``. " <> $helpMsg;
 
 End[];
 EndPackage[];
