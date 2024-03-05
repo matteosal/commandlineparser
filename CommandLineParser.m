@@ -48,6 +48,14 @@ ParseCommandLine[{posSpecsRaw_, optSpecsRaw_, helpHeader_}, args_] := Module[
 ];
 
 checkRawSpecs[{pos_, opt_}] := Module[{variadicPos},
+	If[!ListQ[pos],
+		Message[ParseCommandLine::badspec, "Positional", pos];
+		Abort[]		
+	];
+	If[!ListQ[opt],
+		Message[ParseCommandLine::badspec, "Optional", opt];
+		Abort[]		
+	];
 	Scan[checkRawSpec[#, False]&, pos];
 	Scan[checkRawSpec[#, True]&, opt];
 	variadicPos = Position[pos, "Variadic" -> True, {3}];
