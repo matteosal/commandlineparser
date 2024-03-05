@@ -6,6 +6,7 @@ NumericSpec;
 StringSpec;
 BooleanSpec;
 EnumSpec;
+RepeatedSpec;
 
 Begin["`Private`"];
 
@@ -123,7 +124,7 @@ parsePosArgs[specs_, posArgs_] := Module[{isVariadic, specs2, parsed, most, vari
 parseOptArgs[specs_, optArgs_] := Module[{provided, providedAssoc, unknown},
 	provided = Transpose @ StringReplace[optArgs, 
 		{
-			"--" ~~ name__ ~~ "=" ~~ val__ :> {name, val},
+			"--" ~~ name__ ~~ "=" ~~ val___ :> {name, val},
 			"--" ~~ name__ :> {name, "True"},
 			_ :> (Message[ParseCommandLine::badopts, optArgs]; Abort[];)
 		}
@@ -299,6 +300,29 @@ EnumSpec[name_, values_, doc_, OptionsPattern[]] := Module[
 		" or their lower case equivalents";
 	outputDoc = appendDocSpec[doc, specDoc];
 	{name, patt, outputDoc, "Parser" -> parser, "Variadic" -> OptionValue["Variadic"]}
+]
+
+RepeatedSpec[singleSpec_, separator_, doc_] := Module[
+	{singleSpec2, useDefault, name, default, singlePatt, singleParser, singleCheck},
+	If[Length[singleSpec] === 2,
+		useDefault = True;
+		{singleSpec2, default} = singleSpec
+		,
+		useDefault = False;
+		singleSpec2 = singleSpec
+	];
+	{name, singlePatt} = Take[singleSpec2, 2];
+	singleParser = FirstCase[singleSpec2, HoldPattern["Parser" -> p_] :> p, ToExpression];
+	singleCheck = FirstCase[singleSpec2, HoldPattern["PostCheck" -> c_] :> c, True&];
+	{
+		If[useDefault, {name, default}, name],
+		(RepeatedNull[singlePatt ~~ separator] ~~ singlePatt) | "",
+		doc,
+		"Parser" -> With[{p = singleParser}, 
+			Function[Map[p, StringSplit[#, separator]]]
+		],
+		"PostCheck" -> With[{c = singleCheck}, Function[And @@ Map[c, #]]]
+	}
 ]
 
 appendDocSpec[doc_, spec_] := StringJoin[
