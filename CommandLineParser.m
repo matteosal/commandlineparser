@@ -124,7 +124,7 @@ parsePosArgs[specs_, posArgs_] := Module[{isVariadic, specs2, parsed, most, vari
 		{most, variadic} = TakeDrop[parsed, Length[specs] - 1];
 		parsed = Append[most, variadic]
 	];
-	parsed
+	AssociationThread[specs[[All, "Name"]], parsed]
 ];
 
 parseOptArgs[specs_, optArgs_] := Module[{provided, providedAssoc, unknown},
