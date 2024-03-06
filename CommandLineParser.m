@@ -58,11 +58,11 @@ checkRawSpecs[{pos_, opt_}] := Module[{variadicPos},
 	];
 	Scan[checkRawSpec[#, False]&, pos];
 	Scan[checkRawSpec[#, True]&, opt];
-	variadicPos = Position[pos, "Variadic" -> True, {3}];
+	variadicPos = Flatten @ Position[pos[[All, 2, 4]], True];
 	If[
 		Or[
 			Length[variadicPos] > 1,
-			Length[variadicPos] === 1 && variadicPos[[1, 1]] =!= Length[pos]
+			Length[variadicPos] === 1 && variadicPos[[1]] =!= Length[pos]
 		],
 		Message[ParseCommandLine::badvariadic];
 		Abort[]
@@ -289,9 +289,7 @@ EnumSpec[values_, doc_, OptionsPattern[]] := Module[
 
 RepeatedSpec[singleSpec_, separator_, doc_] := Module[
 	{singlePatt, singleParser, singleCheck},
-	singlePatt = First[singleSpec];
-	singleParser = FirstCase[singleSpec, HoldPattern["Parser" -> p_] :> p, ToExpression];
-	singleCheck = FirstCase[singleSpec, HoldPattern["PostCheck" -> c_] :> c, True&];
+	{singlePatt, singleParser, singleCheck} = singleSpec[[1 ;; 3]];
 	{
 		(RepeatedNull[singlePatt ~~ separator] ~~ singlePatt) | "",
 		With[{p = singleParser}, 
