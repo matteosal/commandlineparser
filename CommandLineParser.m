@@ -71,11 +71,7 @@ checkRawSpecs[{pos_, opt_}] := Module[{variadicPos},
 
 checkRawSpec[spec:Rule[name_, data_], isOpt_] := Module[{test},
 	test = And[
-		2 <= Length[data] <= 2 + Length[Options[toSpec2]],
-		Developer`EmptyQ @ Complement[
-			Keys @ Cases[data, HoldPattern[s_ -> _]], 
-			Keys @ Options[toSpec2]
-		],
+		Length[data] === 5,
 		If[isOpt,
 			MatchQ[name, {_?StringQ, _?StringQ}],
 			MatchQ[name, _?StringQ]		
@@ -91,12 +87,9 @@ checkRawSpec[spec_, isOpt_] := (
 	Abort[]
 )
 
-toSpec[name_ -> data_] := Apply[toSpec2, Prepend[data, name]]
-
-Options[toSpec2] = {"Parser" -> ToExpression, "PostCheck" -> Function[True], 
-	"Variadic" -> False};
-
-toSpec2[name_, patt_, doc_, OptionsPattern[]] := Module[{name2, addDefault, default, res},
+toSpec[name_ -> data_] := Apply[toSpec, Prepend[data, name]]
+toSpec[name_, patt_, parser_, postCheck_, variadic_, doc_] := Module[
+	{name2, addDefault, default, res},
 	If[ListQ[name],
 		{name2, default} = name;
 		addDefault = True,
@@ -104,8 +97,7 @@ toSpec2[name_, patt_, doc_, OptionsPattern[]] := Module[{name2, addDefault, defa
 		addDefault = False
 	];
 	res = <|"Name" -> name2, "StringPattern" -> patt, "Documentation" -> doc, 
-		"Parser" -> OptionValue["Parser"], "PostCheck" -> OptionValue["PostCheck"],
-		"Variadic" -> OptionValue["Variadic"]|>;
+		"Parser" -> parser, "PostCheck" -> postCheck, "Variadic" -> variadic|>;
 	If[addDefault,
 		Append[res, "Default" -> default],
 		res
@@ -266,21 +258,19 @@ NumericSpec[type_, doc_, OptionsPattern[]] := Module[
 	];
 	postCheck = With[{checks = checks}, Function[{val}, And @@ Map[#[val]&, checks]]];
 
-	{patt, doc, "Parser" -> parser, "PostCheck" -> postCheck, 
-		"Variadic" -> OptionValue["Variadic"]}
+	{patt, parser, postCheck, OptionValue["Variadic"], doc}
 ];
 
 Options[StringSpec] = {"Variadic" -> False};
-StringSpec[doc_, OptionsPattern[]] := {___, doc, "Parser" -> Identity, 
-	"Variadic" -> OptionValue["Variadic"]
-}
+StringSpec[doc_, OptionsPattern[]] := {___, Identity, True&, OptionValue["Variadic"], doc}
 
 Options[BooleanSpec] = {"Variadic" -> False};
 BooleanSpec[doc_, OptionsPattern[]] := {
-	"true"|"false"|"True"|"False", 
-	doc, 
-	"Parser" -> Function[Replace[#, {"true"|"True" -> True, "false"|"False" -> False}]],
-	"Variadic" -> OptionValue["Variadic"]
+	"true"|"false"|"True"|"False",
+	Function[Replace[#, {"true"|"True" -> True, "false"|"False" -> False}]],
+	True&,
+	OptionValue["Variadic"],
+	doc
 }
 
 Options[EnumSpec] = {"Variadic" -> False};
@@ -294,7 +284,7 @@ EnumSpec[values_, doc_, OptionsPattern[]] := Module[
 	];
 	patt = Alternatives @@ Keys[replacements];
 	parser = With[{r = replacements}, Function[Replace[#, r]]];
-	{patt, doc, "Parser" -> parser, "Variadic" -> OptionValue["Variadic"]}
+	{patt, parser, True&, OptionValue["Variadic"], doc}
 ]
 
 RepeatedSpec[singleSpec_, separator_, doc_] := Module[
@@ -304,11 +294,12 @@ RepeatedSpec[singleSpec_, separator_, doc_] := Module[
 	singleCheck = FirstCase[singleSpec, HoldPattern["PostCheck" -> c_] :> c, True&];
 	{
 		(RepeatedNull[singlePatt ~~ separator] ~~ singlePatt) | "",
-		doc,
-		"Parser" -> With[{p = singleParser}, 
+		With[{p = singleParser}, 
 			Function[Map[p, StringSplit[#, separator]]]
 		],
-		"PostCheck" -> With[{c = singleCheck}, Function[And @@ Map[c, #]]]
+		With[{c = singleCheck}, Function[And @@ Map[c, #]]],
+		False,
+		doc
 	}
 ]
 
