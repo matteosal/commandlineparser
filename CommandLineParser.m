@@ -47,34 +47,57 @@ ParseCommandLine[{posSpecsRaw_, optSpecsRaw_, helpHeader_}, args_] := Module[
 	{posParsed, optsParsed}
 ];
 
-checkRawSpecs[{pos_, opt_}] := Module[{variadicPos},
-	If[!ListQ[pos],
-		Message[ParseCommandLine::badspec, "Positional", pos];
+checkRawSpecs[{args_, opts_}] := Module[{variadicPos, hasVariadic, split, test},
+	If[!ListQ[args],
+		Message[ParseCommandLine::badspec, "Positional", args];
 		Abort[]		
 	];
-	If[!ListQ[opt],
-		Message[ParseCommandLine::badspec, "Optional", opt];
+	If[!ListQ[opts],
+		Message[ParseCommandLine::badspec, "Optional", opts];
 		Abort[]		
 	];
-	Scan[checkRawSpec[#, False]&, pos];
-	Scan[checkRawSpec[#, True]&, opt];
-	variadicPos = Flatten @ Position[pos[[All, 2, 4]], True];
-	If[
+	Scan[checkRawSpec[#, False]&, args];
+	Scan[checkRawSpec[#, True]&, opts];
+	(* Only the last pos argument can be variadic and it must not have a default *)
+	variadicPos = Flatten @ Position[args[[All, 2, 4]], True];
+	Which[
+		Developer`EmptyQ[variadicPos],
+			hasVariadic = False,
 		Or[
 			Length[variadicPos] > 1,
-			Length[variadicPos] === 1 && variadicPos[[1]] =!= Length[pos]
+			Length[variadicPos] === 1 && variadicPos =!= {Length[args]}
 		],
-		Message[ParseCommandLine::badvariadic];
+			Message[ParseCommandLine::badvariadic1];
+			Abort[],
+		True,
+			hasVariadic = True
+	];
+	If[hasVariadic && Length[First @ Last @ args] === 2,
+		Message[ParseCommandLine::badvariadic2];
 		Abort[]
+	];
+	(* Check position of positional arguments with optional values *)
+	If[MemberQ[args, {_, _} -> _],
+		split = Split[args, Length[First[#1]] === Length[First[#2]] &];
+		test = If[hasVariadic,
+			getLengths[split] === {0, 2, 0},
+			getLengths[split] === {0, 2}
+		];
+		If[!test,
+			Message[ParseCommandLine::badposdef];
+			Abort[]
+		]
 	]
-]
+];
+
+getLengths[split_] := Flatten @ Map[DeleteDuplicates] @ Map[Length, split[[All, All, 1]], {2}]
 
 checkRawSpec[spec:Rule[name_, data_], isOpt_] := Module[{test},
 	test = And[
 		Length[data] === 5,
 		If[isOpt,
 			MatchQ[name, {_?StringQ, _?StringQ}],
-			MatchQ[name, _?StringQ]		
+			MatchQ[name, _?StringQ | {_?StringQ, _?StringQ}]
 		]
 	];
 	If[!test,
@@ -104,28 +127,40 @@ toSpec[name_, patt_, parser_, postCheck_, variadic_, doc_] := Module[
 	]
 ]
 
-parsePosArgs[specs_, posArgs_] := Module[{isVariadic, specs2, parsed, most, variadic},
-	isVariadic = specs[[-1, "Variadic"]];
+parsePosArgs[specs_, posArgs_] := Module[
+	{hasVariadic, nOptional, nMandatory, posArgs2, specs2, parsed, most, variadic},
+	hasVariadic = specs[[-1, "Variadic"]];
+	nOptional = Count[specs, KeyValuePattern @ {"Default" -> _}];
+	nMandatory = Length[specs] - nOptional - If[hasVariadic, 1, 0];
 	If[
 		Or[
-			!isVariadic && Length[posArgs] =!= Length[specs],
-			isVariadic && Length[posArgs] < Length[specs] - 1
+			hasVariadic && !(nMandatory <= Length[posArgs]),
+			!hasVariadic && !(nMandatory <= Length[posArgs] <= nMandatory + nOptional)
 		],
-		Message[ParseCommandLine::poslen, Length[posArgs], 
-			If[isVariadic, "at least " <> ToString[Length[specs]], Length[specs]]];
+		Message[ParseCommandLine::poslen, Length[posArgs], nMandatory,
+			If[hasVariadic, "infinity", nMandatory + nOptional]];
 		Abort[]
 	];
-	specs2 = If[isVariadic,
-		PadRight[specs, Length[posArgs], Last[specs]],
+	(* Add defaults *)
+	posArgs2 = If[Length[posArgs] < Length[specs] && nOptional > 0,
+		Join[
+			posArgs,
+			Take[specs, {Length[posArgs] + 1, If[hasVariadic, -2, -1]}][[All, "Default"]]
+		],
+		posArgs
+	];
+	(* This can shorten the specs in case the variadic has length 0 *)
+	specs2 = If[hasVariadic,
+		PadRight[specs, Length[posArgs2], Last[specs]],
 		specs
 	];
-	parsed = MapThread[parseSingle, {specs2, posArgs, Range @ Length[specs2]}];
-	If[isVariadic,
+	parsed = MapThread[parseSingle, {specs2, posArgs2, Range @ Length[specs2]}];
+	If[hasVariadic,
 		{most, variadic} = TakeDrop[parsed, Length[specs] - 1];
 		parsed = Append[most, variadic]
 	];
 	AssociationThread[specs[[All, "Name"]], parsed]
-];
+]
 
 parseOptArgs[specs_, optArgs_] := Module[{provided, providedAssoc, unknown},
 	provided = Transpose @ StringReplace[optArgs, 
@@ -304,12 +339,14 @@ RepeatedSpec[singleSpec_, separator_, doc_] := Module[
 $helpMsg = "Please add the flag --help for documentation.";
 ParseCommandLine::badopts = "Optional arguments were not correctly formatted: ``.";
 ParseCommandLine::badspec = "`` argument specification `` is not valid.";
-ParseCommandLine::badvariadic = "Invalid argument specification: only one positional argument can be variadic and must appear as the end of the positional argument specification.";
+ParseCommandLine::badposdef = "Invalid positional argument specification: positional arguments without defaults should appear before the ones with defaults. Only a single variadic argument can appear after.";
+ParseCommandLine::badvariadic1 = "Invalid argument specification: only one positional argument can be variadic and must appear as the end of the positional argument specification.";
+ParseCommandLine::badvariadic2 = "Invalid argument specification: variadic arguments cannot have a default. If nothing is passed they automatically default to an empty list.";
 ParseCommandLine::clfail = "Could not access the command line.";
 ParseCommandLine::failcheck = "`` argument `` was parsed to ``, which is an invalid value. Documentation string for the argument is: \"``\".";
 ParseCommandLine::nomatch = "`` argument `` was ``, which is an invalid value. Documentation string for the argument is: \"``\".";
 ParseCommandLine::nostring = "Provided argument list was not a list of strings.";
-ParseCommandLine::poslen = "`` positional arguments were passed but specification requires ``. " <> $helpMsg;
+ParseCommandLine::poslen = "`` positional arguments were passed but specification requires between `` and ``. " <> $helpMsg;
 ParseCommandLine::unkopt = "Unknown options ``. " <> $helpMsg;
 
 End[];
