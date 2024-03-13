@@ -130,7 +130,10 @@ toSpec[name_, patt_, parser_, postCheck_, variadic_, doc_] := Module[
 
 parsePosArgs[specs_, posArgs_] := Module[
 	{hasVariadic, nOptional, nMandatory, posArgs2, specs2, parsed, most, variadic},
-	hasVariadic = specs[[-1, "Variadic"]];
+	hasVariadic = If[Length[specs] > 0,
+		specs[[-1, "Variadic"]],
+		False
+	];
 	nOptional = Count[specs, KeyValuePattern @ {"Default" -> _}];
 	nMandatory = Length[specs] - nOptional - If[hasVariadic, 1, 0];
 	If[
