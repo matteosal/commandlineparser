@@ -88,16 +88,33 @@ checkRawSpecs[{args_, opts_}] := Module[{variadicPos, hasVariadic, split, test},
 
 getLengths[split_] := Flatten @ Map[DeleteDuplicates] @ Map[Length, split[[All, All, 1]], {2}]
 
-checkRawSpec[spec:Rule[name_, data_], isOpt_] := Module[{hasVariadic},
+checkRawSpec[spec:Rule[name_, data_], isOpt_] := Module[
+	{patt, parser, check, hasVariadic, doc, pattCheck},
 	If[Length[data] =!= 5,
 		Message[ParseCommandLine::badspec, If[isOpt, "Optional", "Positional"], spec];
 		Abort[]
 	];
-	hasVariadic = data[[4]];
+	{patt, parser, check, hasVariadic, doc} = data;
+	(* We check is patt is a valid string pattern by just using it in StringMatchQ *)
+	pattCheck = Quiet[
+		Check[StringMatchQ["xxx", patt], $Failed, StringExpression::invld],
+		StringExpression::invld
+	];
+	If[
+		Or[
+			FailureQ[pattCheck],
+			!MatchQ[parser, _Function],
+			!MatchQ[check, _Function],
+			!BooleanQ[hasVariadic],
+			!StringQ[doc]
+		],
+		Message[ParseCommandLine::badspec, If[isOpt, "Optional", "Positional"], spec];
+		Abort[]		
+	];
 	If[hasVariadic && MatchQ[name, {_?StringQ, _?StringQ}],
 		Message[ParseCommandLine::badvariadic2];
 		Abort[]		
-	]
+	];
 ];
 checkRawSpec[spec_, isOpt_] := (
 	Message[ParseCommandLine::badspec, If[isOpt, "Optional", "Positional"], spec];
@@ -305,7 +322,7 @@ NumericSpec[type_, doc_, OptionsPattern[]] := Module[
 ];
 
 Options[StringSpec] = {"Variadic" -> False};
-StringSpec[doc_, OptionsPattern[]] := {___, Identity, True&, OptionValue["Variadic"], doc}
+StringSpec[doc_, OptionsPattern[]] := {___, #&, True&, OptionValue["Variadic"], doc}
 
 Options[BooleanSpec] = {"Variadic" -> False};
 BooleanSpec[doc_, OptionsPattern[]] := {
