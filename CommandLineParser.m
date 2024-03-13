@@ -72,10 +72,6 @@ checkRawSpecs[{args_, opts_}] := Module[{variadicPos, hasVariadic, split, test},
 		True,
 			hasVariadic = True
 	];
-	If[hasVariadic && Length[First @ Last @ args] === 2,
-		Message[ParseCommandLine::badvariadic2];
-		Abort[]
-	];
 	(* Check position of positional arguments with optional values *)
 	If[MemberQ[args, {_, _} -> _],
 		split = Split[args, Length[First[#1]] === Length[First[#2]] &];
@@ -92,7 +88,7 @@ checkRawSpecs[{args_, opts_}] := Module[{variadicPos, hasVariadic, split, test},
 
 getLengths[split_] := Flatten @ Map[DeleteDuplicates] @ Map[Length, split[[All, All, 1]], {2}]
 
-checkRawSpec[spec:Rule[name_, data_], isOpt_] := Module[{test},
+checkRawSpec[spec:Rule[name_, data_], isOpt_] := Module[{test, hasVariadic},
 	test = And[
 		Length[data] === 5,
 		If[isOpt,
@@ -102,6 +98,11 @@ checkRawSpec[spec:Rule[name_, data_], isOpt_] := Module[{test},
 	];
 	If[!test,
 		Message[ParseCommandLine::badspec, If[isOpt, "Optional", "Positional"], spec];
+		Abort[]
+	];
+	hasVariadic = data[[4]];
+	If[MatchQ[name, {_?StringQ, _?StringQ} && hasVariadic],
+		Message[ParseCommandLine::badvariadic2];
 		Abort[]
 	]
 ];
