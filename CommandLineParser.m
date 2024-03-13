@@ -23,7 +23,7 @@ ParseCommandLine[spec_, $Failed] := (
 
 ParseCommandLine[{posSpecsRaw_, optSpecsRaw_, helpHeader_}, args_] := Module[
 	{optPos, posArgs, optArgs, posParsed, optParsed},
-	If[!MatchQ[args], {Repeated[_?StringQ]},
+	If[!MatchQ[args, {RepeatedNull[_?StringQ]}],
 		Message[ParseCommandLine::nostring];
 		Abort[];
 	];
@@ -80,8 +80,8 @@ checkRawSpecs[{args_, opts_}] := Module[{variadicPos, hasVariadic, split, test},
 	If[MemberQ[args, {_, _} -> _],
 		split = Split[args, Length[First[#1]] === Length[First[#2]] &];
 		test = If[hasVariadic,
-			getLengths[split] === {0, 2, 0},
-			getLengths[split] === {0, 2}
+			getLengths[split] === {0, 2, 0}|{2, 0},
+			getLengths[split] === {0, 2}|{2}
 		];
 		If[!test,
 			Message[ParseCommandLine::badposdef];
@@ -326,7 +326,7 @@ RepeatedSpec[singleSpec_, separator_, doc_] := Module[
 	{singlePatt, singleParser, singleCheck},
 	{singlePatt, singleParser, singleCheck} = singleSpec[[1 ;; 3]];
 	{
-		(RepeatedNull[singlePatt ~~ separator] ~~ singlePatt) | "",
+		(RepeatedNull[singlePatt ~~ separator] ~~ singlePatt) | separator | "",
 		With[{p = singleParser}, 
 			Function[Map[p, StringSplit[#, separator]]]
 		],
