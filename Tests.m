@@ -47,7 +47,7 @@ repeatedSpec1 = RepeatedSpec[numSpec1, ",", ""];
 repeatedSpec2 = RepeatedSpec[enumSpec2, "|", ""];
 stringSpec1 = StringSpec[""];
 
-varNumSpec1 = NumericSpec["Integer", "", "Interval" -> {0, Infinity}, "Variadic" -> True];
+varNumSpec1 = NumericSpec["Real", "", "Interval" -> {0, 1}, "Variadic" -> True];
 
 (**************************************************)
 (********************* TESTS **********************)
@@ -74,6 +74,11 @@ makeTest["Basic-4", specs,
 	{{"x", Automatic, 0.97}, {-Infinity, True}}
 ];
 
+specs2 = makeArgSpecs[{}, {{numSpec2, "4"}, {boolSpec1, "false"}}];
+
+makeTest["Basic-5", specs2, {}, {{}, {4, False}}];
+makeTest["Basic-6", specs2, {"--opt-1=-infinity", "--opt-2"}, {{}, {-Infinity, True}}];
+
 makeFailureTest["BasicFailure-1", specs, {}, "poslen"];
 makeFailureTest["BasicFailure-2", specs, {"a", "b", "c", "d"}, "poslen"];
 makeFailureTest["BasicFailure-3", specs, {"x", "something", "0.97"}, "nomatch"];
@@ -82,6 +87,7 @@ makeFailureTest["BasicFailure-5", specs, {"x", "Automatic", "0.97", "--boh"}, "u
 makeFailureTest["BasicFailure-6", specs, {"x", "Automatic", "0.97", "--opt-2", "-opt-1"}, "badopts"];
 makeFailureTest["BasicFailure-7", specs, boh, "nostring"]
 makeFailureTest["BasicFailure-8", {x, y}, {}, "badspec"]
+
 
 (* Repeated specs *)
 
@@ -136,8 +142,11 @@ makeFailureTest["OptionalPositionalFailure-3", {{{numSpec2, "-75"}, {boolSpec1}}
 
 specs = makeArgSpecs[{enumSpec1, varNumSpec1}, {}];
 
-makeTest["VariadicPositional-1", specs, {"none", "4"}, {{None, {4}}, {}}];
-makeTest["VariadicPositional-2", specs, {"none", "4", "2", "12"}, {{None, {4, 2, 12}}, {}}];
+makeTest["VariadicPositional-1", specs, {"none", "0.4"}, {{None, {0.4}}, {}}];
+makeTest["VariadicPositional-2", specs, 
+	{"none", "0.4", "0.2", "0.12"},
+	{{None, {0.4, 0.2, 0.12}}, {}}
+];
 makeTest["VariadicPositional-3", specs, {"none"}, {{None, {}}, {}}];
 
 makeFailureTest["VariadicPositionalFailure-1", specs, {"none", "4", "2.5"}, "failcheck"]
@@ -157,19 +166,22 @@ makeFailureTest["VariadicPositionalFailure-4",
 	"badvariadic2"
 ];
 
-(* Optional + Variadic positional argument *)
+(* Optional positional argument + Variadic positional argument *)
 
 specs = makeArgSpecs[{{numSpec2, "-75"}, {boolSpec1, "true"}, varNumSpec1}, {}];
 
-makeTest["OptionalVariadicPositional-1", specs, 
-	{"42", "False", "4", "94"},
-	{{42, False, {4, 94}}, {}}
+makeTest["OptionalPositionalVariadicPositional-1", specs, 
+	{"42", "False", "0.4", "0.94"},
+	{{42, False, {0.4, 0.94}}, {}}
 ];
-makeTest["OptionalVariadicPositional-2", specs, {"42", "False"}, {{42, False, {}}, {}}];
-makeTest["OptionalVariadicPositional-3", specs, {"42"}, {{42, True, {}}, {}}];
-makeTest["OptionalVariadicPositional-4", specs, {}, {{-75, True, {}}, {}}];
+makeTest["OptionalPositionalVariadicPositional-2", specs, 
+	{"42", "False"}, 
+	{{42, False, {}}, {}}
+];
+makeTest["OptionalPositionalVariadicPositional-3", specs, {"42"}, {{42, True, {}}, {}}];
+makeTest["OptionalPositionalVariadicPositional-4", specs, {}, {{-75, True, {}}, {}}];
 
-makeFailureTest["OptionalVariadicPositionalFailure-1", 
+makeFailureTest["OptionalPositionalVariadicPositionalFailure-1", 
 	makeArgSpecs[{varNumSpec1, {numSpec2, "-75"}}, {}], 
 	{}, 
 	"badvariadic1"
