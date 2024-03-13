@@ -88,22 +88,15 @@ checkRawSpecs[{args_, opts_}] := Module[{variadicPos, hasVariadic, split, test},
 
 getLengths[split_] := Flatten @ Map[DeleteDuplicates] @ Map[Length, split[[All, All, 1]], {2}]
 
-checkRawSpec[spec:Rule[name_, data_], isOpt_] := Module[{test, hasVariadic},
-	test = And[
-		Length[data] === 5,
-		If[isOpt,
-			MatchQ[name, {_?StringQ, _?StringQ}],
-			MatchQ[name, _?StringQ | {_?StringQ, _?StringQ}]
-		]
-	];
-	If[!test,
+checkRawSpec[spec:Rule[name_, data_], isOpt_] := Module[{hasVariadic},
+	If[Length[data] =!= 5,
 		Message[ParseCommandLine::badspec, If[isOpt, "Optional", "Positional"], spec];
 		Abort[]
 	];
 	hasVariadic = data[[4]];
-	If[MatchQ[name, {_?StringQ, _?StringQ} && hasVariadic],
+	If[hasVariadic && MatchQ[name, {_?StringQ, _?StringQ}],
 		Message[ParseCommandLine::badvariadic2];
-		Abort[]
+		Abort[]		
 	]
 ];
 checkRawSpec[spec_, isOpt_] := (
@@ -166,28 +159,39 @@ parsePosArgs[specs_, posArgs_] := Module[
 	AssociationThread[specs[[All, "Name"]], parsed]
 ]
 
-parseOptArgs[specs_, optArgs_] := Module[{provided, providedAssoc, unknown},
-	provided = Transpose @ StringReplace[optArgs, 
+parseOptArgs[specs_, optArgs_] := Module[{provided, unknown, values, parsed, spec},
+	provided = StringReplace[optArgs, 
 		{
 			"--" ~~ name__ ~~ "=" ~~ val___ :> {name, val},
 			"--" ~~ name__ :> {name, "True"},
 			_ :> (Message[ParseCommandLine::badopts, optArgs]; Abort[];)
 		}
 	][[All, 1]];
-	providedAssoc = If[Developer`EmptyQ[provided], <||>, AssociationThread @@ provided];
-	(* ^ <|optName -> val, ...|> *)
-	If[!Developer`EmptyQ[unknown = Complement[Keys @ providedAssoc, specs[[All, "Name"]]]],
+	provided = Rule @@@ provided;
+	(* ^ {optName -> val, ...} optName can be duplicated *)
+	If[!Developer`EmptyQ[unknown = Complement[Keys @ provided, specs[[All, "Name"]]]],
 		Message[ParseCommandLine::unkopt, unknown];
 		Abort[]
 	];
-	Association @ Map[
-		#["Name"] -> parseSingle[
-			#, 
-			Lookup[providedAssoc, #["Name"], #["Default"]],
-			None
-		]&,
+	parsed = Flatten @ Map[
+		Function[
+			values = Replace[
+				Cases[provided, HoldPattern[#Name -> val_] :> val],
+				{} -> {#Default}
+			];
+			Map[Function[value, #Name -> parseSingle[#, value, None]], values]
+		],
 		specs
-	]
+	];
+	parsed = GroupBy[parsed, First, Values];
+	parsed = Association @ KeyValueMap[
+		Function[
+			spec = FirstCase[specs, KeyValuePattern @ {"Name" -> #1}];
+			#1 -> Replace[spec["Variadic"], {True -> #2, False -> Last[#2]}]
+		],
+		parsed
+	];
+	parsed
 ];
 
 parseSingle[spec_, arg_, pos_] := Module[{parsed},
