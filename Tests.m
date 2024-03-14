@@ -186,3 +186,36 @@ makeFailureTest["OptionalPositionalVariadicPositionalFailure-1",
 	{}, 
 	"badvariadic1"
 ];
+
+(* Variadic optional argument *)
+
+specs = makeArgSpecs[{}, {varNumSpec1, {boolSpec1, "false"}}];
+
+makeTest["VariadicOptional-1", specs, {}, {{}, {{}, False}}];
+makeTest["VariadicOptional-2", specs, {"--opt-1=0.7"}, {{}, {{0.7}, False}}];
+makeTest["VariadicOptional-3", specs, 
+	{"--opt-1=0.7", "--opt-1=0.15"},
+	{{}, {{0.7, 0.15}, False}}
+];
+makeTest["VariadicOptional-4", specs, 
+	{"--opt-1=0.7", "--opt-1=0.15"},
+	{{}, {{0.7, 0.15}, False}}
+];
+makeTest["VariadicOptional-5", specs, 
+	{"--opt-1=0.7", "--opt-1=0.15", "--opt-2"},
+	{{}, {{0.7, 0.15}, True}}
+];
+makeTest["VariadicOptional-6", specs, 
+	{"--opt-1=0.7", "--opt-1=0.15", "--opt-2", "--opt-2=false"},
+	{{}, {{0.7, 0.15}, False}}
+];
+
+makeFailureTest["VariadicOptionalFailure-1", specs, 
+	{"--opt-1=0.7", "--opt-1=15"},
+	"failcheck"
+];
+makeFailureTest["VariadicOptionalFailure-2", 
+	makeArgSpecs[{}, {{varNumSpec1, "0.4"}}], 
+	{},
+	"badvariadic2"
+];
