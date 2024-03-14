@@ -102,6 +102,7 @@ checkRawSpec[spec:Rule[name_, data_], isOpt_] := Module[
 	];
 	If[
 		Or[
+			!MatchQ[name, {_?StringQ, _?StringQ} | _?StringQ],
 			FailureQ[pattCheck],
 			!MatchQ[parser, _Function],
 			!MatchQ[check, _Function],
@@ -111,9 +112,13 @@ checkRawSpec[spec:Rule[name_, data_], isOpt_] := Module[
 		Message[ParseCommandLine::badspec, If[isOpt, "Optional", "Positional"], spec];
 		Abort[]		
 	];
-	If[hasVariadic && MatchQ[name, {_?StringQ, _?StringQ}],
-		Message[ParseCommandLine::badvariadic2];
-		Abort[]		
+	Which[
+		hasVariadic && MatchQ[name, {_?StringQ, _?StringQ}],
+			Message[ParseCommandLine::badvariadic2];
+			Abort[],
+		isOpt && !hasVariadic && MatchQ[name, _?StringQ],
+			Message[ParseCommandLine::badspec, "Optional", spec];
+			Abort[]			
 	];
 ];
 checkRawSpec[spec_, isOpt_] := (
