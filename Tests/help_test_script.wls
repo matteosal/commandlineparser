@@ -1,4 +1,7 @@
-parserPath = FileNameJoin @ {DirectoryName[$InputFileName], "CommandLineParser.m"};
+parserPath = FileNameJoin @ {
+	ParentDirectory @ DirectoryName[$InputFileName], 
+	"CommandLineParser.m"
+};
 Get[parserPath];
 
 posArgSpec = {

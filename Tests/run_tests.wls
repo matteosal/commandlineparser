@@ -12,7 +12,10 @@ reportIfFailure[report_, key_, msg_] := If[report[key] =!= {},
 	Print["The following tests " <> msg <> ": " <> ToString[ids]]	
 ]
 
-parserPath = FileNameJoin @ {DirectoryName[$InputFileName], "CommandLineParser.m"};
+parserPath = FileNameJoin @ {
+	ParentDirectory @ DirectoryName[$InputFileName],
+	"CommandLineParser.m"
+};
 Get[parserPath];
 
 testsPath = FileNameJoin @ {DirectoryName[$InputFileName], "Tests.m"};
