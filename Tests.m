@@ -219,3 +219,33 @@ makeFailureTest["VariadicOptionalFailure-2",
 	{},
 	"badvariadic2"
 ];
+
+(* Help message *)
+
+execPath = FileNameJoin @ {$InstallationDirectory, "Executables", "math"};
+scriptPath = FileNameJoin @ {DirectoryName[$InputFileName], "help_test_script.wls"};
+
+stdOut = RunProcess[{execPath, "-script", scriptPath, "--help"}, "StandardOutput"];
+expected = "This is a script that does something.
+
+* Mandatory positional arguments:
+NAME             DOCUMENTATION
+my-string-arg    A generic string argument
+
+* Optional positional arguments (must be passed in this order after the mandatory arguments):
+NAME                       DEFAULT    DOCUMENTATION
+my-symbol-arg              none       A special symbol. Can be None, Automatic, Inherited or their lower-case equivalents
+my-variadic-numeric-arg    {}         Any sequence of positive integers, including none
+
+Argument my-variadic-numeric-arg is variadic.
+
+* Optional arguments (must be passed as --name=... in any order):
+NAME                      DEFAULT    DOCUMENTATION
+my-numeric-opt            0.5        A real number between 0 and 1
+my-boolean-opt            false      A boolean
+my-variadic-string-opt    {}         A variadic string argument
+
+The following options are variadic: {my-variadic-string-opt}
+";
+
+VerificationTest[stdOut, expected, TestID -> "HelpMessage-1"];

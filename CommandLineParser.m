@@ -257,37 +257,55 @@ getCommandLineArgs[] := Which[
 		$Failed
 ];
 
-printHelp[posSpecs_, optSpecs_, helpHeader_] := Module[{maxNameLen, maxDefLen},
+printHelp[posSpecs_, optSpecs_, helpHeader_] := Module[{mandatoryPos, optionalPos, varOpt},
 	If[helpHeader =!= "",
 		Print[helpHeader];
 	];
-	If[!Developer`EmptyQ[posSpecs],
-		maxNameLen = Max @ StringLength @ posSpecs[[All, "Name"]];
-		Print["Positional arguments:"];
-		Scan[
-			Print @ StringJoin[
-				StringPadRight[#Name, maxNameLen],
-				"    ",
-				#Documentation
-			]&, 
-			posSpecs
-		];
+	mandatoryPos = Extract[
+		posSpecs,
+		Position[posSpecs, KeyValuePattern @ {"Default" -> $NotProvided, "Variadic" -> False}]
+	];
+	optionalPos = Extract[
+		posSpecs,
+		Position[posSpecs, 
+			Alternatives[
+				KeyValuePattern @ {"Default" -> Except[$NotProvided]},
+				KeyValuePattern @ {"Variadic" -> True}
+			]
+		]
+	];
+	If[!Developer`EmptyQ[mandatoryPos],
+		Print[];
+		Print["* Mandatory positional arguments:"];
+		printArgTableColumns[mandatoryPos, {"Name", "Documentation"}]
+	];
+	If[!Developer`EmptyQ[optionalPos],
+		Print[];
+		Print["* Optional positional arguments (must be passed in this order after the mandatory arguments):"];		
+		printArgTableColumns[optionalPos, {"Name", "Default", "Documentation"}];
+		If[optionalPos[[-1, "Variadic"]],
+			Print[];
+			Print["Argument " <> optionalPos[[-1, "Name"]] <> " is variadic."]
+		]
 	];
 	If[!Developer`EmptyQ[optSpecs],
-		maxNameLen = Max @ StringLength @ optSpecs[[All, "Name"]];
-		maxDefLen  = Max @ StringLength @ optSpecs[[All, "Default"]];
-		Print["Optional arguments:"];
-		Scan[
-			Print @ StringJoin[
-				StringPadRight[#Name, maxNameLen],
-				"    ",
-				StringPadRight[#Default, maxDefLen],
-				"    ",
-				#Documentation
-			]&, 
-			optSpecs
-		];
+		Print[];
+		Print["* Optional arguments (must be passed as --name=... in any order):"];			
+		printArgTableColumns[optSpecs, {"Name", "Default", "Documentation"}];
+		varOpt = Cases[optSpecs, a:KeyValuePattern @ {"Variadic" -> True} :> a["Name"]];
+		If[varOpt =!= {},
+			Print[];
+			Print["The following options are variadic: " <> ToString[varOpt]];
+		]
 	];
+]
+
+printArgTableColumns[specs_, keys_] := Module[{columns, most, maxWidths, padded},
+	columns = Transpose @ Prepend[Lookup[specs, keys], ToUpperCase[keys]];
+	most = Replace[Most[columns], $NotProvided -> "{}", {2}];
+	maxWidths = Max /@ Map[StringLength, most, {2}];
+	padded = MapThread[StringPadRight, {most, maxWidths}];
+	Scan[Print[StringRiffle[#, "    "]]&, Transpose @ Append[padded, Last[columns]]];
 ]
 
 (******************************************************************)
