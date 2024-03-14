@@ -22,7 +22,7 @@ ParseCommandLine[spec_, $Failed] := (
 )
 
 ParseCommandLine[{posSpecsRaw_, optSpecsRaw_, helpHeader_}, args_] := Module[
-	{optPos, posArgs, optArgs, posParsed, optParsed},
+	{posSpecs, optSpecs, optPos, posArgs, optArgs, posParsed, optsParsed},
 	If[!MatchQ[args, {RepeatedNull[_?StringQ]}],
 		Message[ParseCommandLine::nostring];
 		Abort[];
@@ -128,19 +128,17 @@ checkRawSpec[spec_, isOpt_] := (
 
 toSpec[name_ -> data_] := Apply[toSpec, Prepend[data, name]]
 toSpec[name_, patt_, parser_, postCheck_, variadic_, doc_] := Module[
-	{name2, addDefault, default, res},
-	If[ListQ[name],
-		{name2, default} = name;
-		addDefault = True,
-		name2 = name;
-		addDefault = False
-	];
-	res = <|"Name" -> name2, "StringPattern" -> patt, "Documentation" -> doc, 
-		"Parser" -> parser, "PostCheck" -> postCheck, "Variadic" -> variadic|>;
-	If[addDefault,
-		Append[res, "Default" -> default],
-		res
-	]
+	{name2, default, res},
+	{name2, default} = Replace[name, {l_List :> l, s_ :> {s, $NotProvided}}];
+	<|
+		"Name" -> name2, 
+		"StringPattern" -> patt, 
+		"Documentation" -> doc, 
+		"Parser" -> parser, 
+		"PostCheck" -> postCheck, 
+		"Variadic" -> variadic,
+		"Default" -> default
+	|>
 ]
 
 parsePosArgs[specs_, posArgs_] := Module[
@@ -149,7 +147,7 @@ parsePosArgs[specs_, posArgs_] := Module[
 		specs[[-1, "Variadic"]],
 		False
 	];
-	nOptional = Count[specs, KeyValuePattern @ {"Default" -> _}];
+	nOptional = Count[specs, KeyValuePattern @ {"Default" -> Except[$NotProvided]}];
 	nMandatory = Length[specs] - nOptional - If[hasVariadic, 1, 0];
 	If[
 		Or[
@@ -197,15 +195,21 @@ parseOptArgs[specs_, optArgs_] := Module[{provided, unknown, values, parsed, spe
 	];
 	parsed = Flatten @ Map[
 		Function[
-			values = Replace[
-				Cases[provided, HoldPattern[#Name -> val_] :> val],
-				{} -> {#Default}
-			];
-			Map[Function[value, #Name -> parseSingle[#, value, None]], values]
+			values = Cases[provided, HoldPattern[#Name -> val_] :> val];
+			Which[
+				values === {} && #Variadic,
+					{#Name -> $lenZeroVariadic}, (* inhert special symbol *)
+				values === {},
+					{#Name -> parseSingle[#, #Default, None]},
+				True,
+					Table[#Name -> parseSingle[#, v, None], {v, values}]
+			]
 		],
 		specs
 	];
 	parsed = GroupBy[parsed, First, Values];
+	(* For variadic options aggregate all passed values into a list, for non variadic take the
+	   last provided value. *)
 	parsed = Association @ KeyValueMap[
 		Function[
 			spec = FirstCase[specs, KeyValuePattern @ {"Name" -> #1}];
@@ -213,7 +217,7 @@ parseOptArgs[specs_, optArgs_] := Module[{provided, unknown, values, parsed, spe
 		],
 		parsed
 	];
-	parsed
+	Replace[parsed, {$lenZeroVariadic} -> {}, {1}]
 ];
 
 parseSingle[spec_, arg_, pos_] := Module[{parsed},
