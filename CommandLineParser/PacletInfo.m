@@ -1,10 +1,17 @@
-Paclet[
-	Name -> "CommandLineParser",
-	MathematicaVersion -> "13.0+",	
-	Version -> "1.0.0",
-	Description -> "Parser for command line arguments",
-	Creator -> "Matteo Salvarezza <matteos@wolfram.com>",
-	Extensions -> {
-		{"Kernel", "Root" -> "Kernel", "Context" -> {"CommandLineParser`"}}
-	}
+PacletObject[
+  <|
+    "Name" -> "Wolfram/CommandLineParser",
+    "Description" -> "Parser for command line arguments",
+    "PublisherID" -> "Wolfram",
+    "Creator" -> "Matteo Salvarezza <matteos@wolfram.com>",
+    "Version" -> "1.0.0",
+    "WolframVersion" -> "13.0+",
+    "Extensions" -> {
+      {
+        "Kernel",
+        "Root" -> "Kernel",
+        "Context" -> {"Wolfram`CommandLineParser`"}
+      }
+    }
+  |>
 ]

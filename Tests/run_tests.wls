@@ -17,7 +17,7 @@ parserPath = FileNameJoin @ {
 	"CommandLineParser"
 };
 PacletDirectoryLoad[parserPath];
-Get["CommandLineParser`"];
+Get["Wolfram`CommandLineParser`"];
 
 testsPath = FileNameJoin @ {DirectoryName[$InputFileName], "Tests.m"};
 report = TestReport[testsPath,

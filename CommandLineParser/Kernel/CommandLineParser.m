@@ -1,4 +1,4 @@
-BeginPackage["CommandLineParser`"];
+BeginPackage["Wolfram`CommandLineParser`"];
 
 ParseCommandLine;
 

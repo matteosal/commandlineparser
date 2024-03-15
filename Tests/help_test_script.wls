@@ -3,7 +3,7 @@ parserPath = FileNameJoin @ {
 	"CommandLineParser"
 };
 PacletDirectoryLoad[parserPath];
-Get["CommandLineParser`"];
+Get["Wolfram`CommandLineParser`"];
 
 posArgSpec = {
     "my-string-arg" -> StringSpec["A generic string argument"],
