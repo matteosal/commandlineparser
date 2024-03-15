@@ -1,8 +1,9 @@
 parserPath = FileNameJoin @ {
-	ParentDirectory @ DirectoryName[$InputFileName], 
-	"CommandLineParser.m"
+	ParentDirectory @ DirectoryName[$InputFileName],
+	"CommandLineParser"
 };
-Get[parserPath];
+PacletDirectoryLoad[parserPath];
+Get["CommandLineParser`"];
 
 posArgSpec = {
     "my-string-arg" -> StringSpec["A generic string argument"],

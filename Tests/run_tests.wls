@@ -14,9 +14,10 @@ reportIfFailure[report_, key_, msg_] := If[report[key] =!= {},
 
 parserPath = FileNameJoin @ {
 	ParentDirectory @ DirectoryName[$InputFileName],
-	"CommandLineParser.m"
+	"CommandLineParser"
 };
-Get[parserPath];
+PacletDirectoryLoad[parserPath];
+Get["CommandLineParser`"];
 
 testsPath = FileNameJoin @ {DirectoryName[$InputFileName], "Tests.m"};
 report = TestReport[testsPath,
