@@ -37,24 +37,37 @@ Begin["`Private`"];
 (***************************** PARSER *****************************)
 (******************************************************************)
 
-ParseCommandLine[allSpecs_] := ParseCommandLine[allSpecs, getCommandLineArgs[]]
-ParseCommandLine[{pos_, opts_}, args_] := ParseCommandLine[{pos, opts, ""}, args]
-ParseCommandLine[spec_, $Failed] := (
+Options[ParseCommandLine] = {"ReturnOnError" -> False, "ReturnOnHelp" -> False};
+
+ParseCommandLine[specs_, args_:Automatic, OptionsPattern[]] := Catch[
+	$ReturnOnError = OptionValue["ReturnOnError"];
+	$ReturnOnHelp = OptionValue["ReturnOnHelp"];
+	parseCommandLine[specs, args],
+	"ParseCommandLine"
+]
+
+parseCommandLine[allSpecs_, Automatic] := 
+	parseCommandLine[allSpecs, getCommandLineArgs[]]
+
+parseCommandLine[{posSpecs_, optSpecs_}, args_] := 
+	parseCommandLine[{posSpecs, optSpecs, ""}, args]
+
+parseCommandLine[spec_, $Failed] := (
 	Message[ParseCommandLine::clfail];
-	Abort[];
+	stop[$ReturnOnError, $Failed]
 )
 
-ParseCommandLine[{posSpecsRaw_, optSpecsRaw_, helpHeader_}, args_] := Module[
+parseCommandLine[{posSpecsRaw_, optSpecsRaw_, helpHeader_}, args_] := Module[
 	{posSpecs, optSpecs, optPos, posArgs, optArgs, posParsed, optsParsed},
 	If[!MatchQ[args, {RepeatedNull[_?StringQ]}],
 		Message[ParseCommandLine::nostring];
-		Abort[];
+		stop[$ReturnOnError, $Failed]
 	];
 	checkRawSpecs[{posSpecsRaw, optSpecsRaw}];
 	{posSpecs, optSpecs} = {toSpec /@ posSpecsRaw, toSpec /@ optSpecsRaw};
 	If[MemberQ[args, "--help"],
 		printHelp @@ {posSpecs, optSpecs, helpHeader};
-		Exit[0]
+		stop[$ReturnOnHelp, Null]
 	];
 
 	optPos = First @ FirstPosition[
@@ -73,11 +86,11 @@ ParseCommandLine[{posSpecsRaw_, optSpecsRaw_, helpHeader_}, args_] := Module[
 checkRawSpecs[{args_, opts_}] := Module[{variadicPos, hasVariadic, split, test},
 	If[!ListQ[args],
 		Message[ParseCommandLine::badspec, "Positional", args];
-		Abort[]		
+		stop[$ReturnOnError, $Failed]		
 	];
 	If[!ListQ[opts],
 		Message[ParseCommandLine::badspec, "Optional", opts];
-		Abort[]		
+		stop[$ReturnOnError, $Failed]		
 	];
 	Scan[checkRawSpec[#, False]&, args];
 	Scan[checkRawSpec[#, True]&, opts];
@@ -91,7 +104,7 @@ checkRawSpecs[{args_, opts_}] := Module[{variadicPos, hasVariadic, split, test},
 			Length[variadicPos] === 1 && variadicPos =!= {Length[args]}
 		],
 			Message[ParseCommandLine::badvariadic1];
-			Abort[],
+			stop[$ReturnOnError, $Failed],
 		True,
 			hasVariadic = True
 	];
@@ -104,7 +117,7 @@ checkRawSpecs[{args_, opts_}] := Module[{variadicPos, hasVariadic, split, test},
 		];
 		If[!test,
 			Message[ParseCommandLine::badposdef];
-			Abort[]
+			stop[$ReturnOnError, $Failed]
 		]
 	]
 ];
@@ -115,7 +128,7 @@ checkRawSpec[spec:Rule[name_, data_], isOpt_] := Module[
 	{patt, parser, check, hasVariadic, doc, pattCheck},
 	If[Length[data] =!= 5,
 		Message[ParseCommandLine::badspec, If[isOpt, "Optional", "Positional"], spec];
-		Abort[]
+		stop[$ReturnOnError, $Failed]
 	];
 	{patt, parser, check, hasVariadic, doc} = data;
 	(* We check is patt is a valid string pattern by just using it in StringMatchQ *)
@@ -133,20 +146,20 @@ checkRawSpec[spec:Rule[name_, data_], isOpt_] := Module[
 			!StringQ[doc]
 		],
 		Message[ParseCommandLine::badspec, If[isOpt, "Optional", "Positional"], spec];
-		Abort[]		
+		stop[$ReturnOnError, $Failed]		
 	];
 	Which[
 		hasVariadic && MatchQ[name, {_?StringQ, _?StringQ}],
 			Message[ParseCommandLine::badvariadic2];
-			Abort[],
+			stop[$ReturnOnError, $Failed],
 		isOpt && !hasVariadic && MatchQ[name, _?StringQ],
 			Message[ParseCommandLine::badspec, "Optional", spec];
-			Abort[]			
+			stop[$ReturnOnError, $Failed]			
 	];
 ];
 checkRawSpec[spec_, isOpt_] := (
 	Message[ParseCommandLine::badspec, If[isOpt, "Optional", "Positional"], spec];
-	Abort[]
+	stop[$ReturnOnError, $Failed]
 )
 
 toSpec[name_ -> data_] := Apply[toSpec, Prepend[data, name]]
@@ -179,7 +192,7 @@ parsePosArgs[specs_, posArgs_] := Module[
 		],
 		Message[ParseCommandLine::poslen, Length[posArgs], nMandatory,
 			If[hasVariadic, "infinity", nMandatory + nOptional]];
-		Abort[]
+		stop[$ReturnOnError, $Failed]
 	];
 	(* Add defaults *)
 	posArgs2 = If[Length[posArgs] < Length[specs] && nOptional > 0,
@@ -207,14 +220,14 @@ parseOptArgs[specs_, optArgs_] := Module[{provided, unknown, values, parsed, spe
 		{
 			"--" ~~ name__ ~~ "=" ~~ val___ :> {name, val},
 			"--" ~~ name__ :> {name, "True"},
-			_ :> (Message[ParseCommandLine::badopts, optArgs]; Abort[];)
+			_ :> (Message[ParseCommandLine::badopts, optArgs]; stop[$ReturnOnError, $Failed];)
 		}
 	][[All, 1]];
 	provided = Rule @@@ provided;
 	(* ^ {optName -> val, ...} optName can be duplicated *)
 	If[!Developer`EmptyQ[unknown = Complement[Keys @ provided, specs[[All, "Name"]]]],
 		Message[ParseCommandLine::unkopt, unknown];
-		Abort[]
+		stop[$ReturnOnError, $Failed]
 	];
 	parsed = Flatten @ Map[
 		Function[
@@ -251,7 +264,7 @@ parseSingle[spec_, arg_, pos_] := Module[{parsed},
 			arg, 
 			spec["Documentation"]
 		];
-		Abort[]
+		stop[$ReturnOnError, $Failed]
 	];
 	parsed = spec["Parser"][arg];
 	If[Not @ TrueQ @ spec["PostCheck"][parsed],
@@ -261,7 +274,7 @@ parseSingle[spec_, arg_, pos_] := Module[{parsed},
 			parsed, 
 			spec["Documentation"]
 		];
-		Abort[]
+		stop[$ReturnOnError, $Failed]
 	];
 	parsed
 ];
@@ -336,6 +349,11 @@ printArgTableColumns[specs_, keys_] := Module[{columns, most, maxWidths, padded}
 	padded = MapThread[StringPadRight, {most, maxWidths}];
 	Scan[Print[StringRiffle[#, "    "]]&, Transpose @ Append[padded, Last[columns]]];
 ]
+
+stop[returnQ_, returnVal_] := If[returnQ,
+	Throw[returnVal, "ParseCommandLine"],
+	Abort[]
+];
 
 (******************************************************************)
 (************************** SPEC HELPERS **************************)

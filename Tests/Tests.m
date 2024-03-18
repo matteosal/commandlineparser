@@ -220,6 +220,35 @@ makeFailureTest["VariadicOptionalFailure-2",
 	"badvariadic2"
 ];
 
+(* Options *)
+
+specs = makeArgSpecs[{boolSpec1}, {}];
+
+VerificationTest[
+	ParseCommandLine[specs, {"hello"}, "ReturnOnError" -> True],
+	$Failed,
+	ParseCommandLine::nomatch,
+	TestID -> "Options-1"
+];
+
+nullStream = Replace[$OperatingSystem, {"Windows" -> "NUL", _ -> "/dev/null"}];
+
+VerificationTest[
+	Block[{$Output = nullStream},
+		CheckAbort[ParseCommandLine[specs, {"--help"}], CommandLineParserAborted]
+	],
+	CommandLineParserAborted,
+	TestID -> "Options-2"
+];
+
+VerificationTest[
+	Block[{$Output = nullStream},
+		ParseCommandLine[specs, {"--help"}, "ReturnOnHelp" -> True]
+	],
+	Null,
+	TestID -> "Options-3"
+];
+
 (* Help message *)
 
 execPath = FileNameJoin @ {$InstallationDirectory, "Executables", "math"};
