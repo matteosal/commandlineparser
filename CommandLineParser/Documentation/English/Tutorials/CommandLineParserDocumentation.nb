@@ -1,0 +1,1570 @@
+Notebook[{
+
+Cell[CellGroupData[{
+Cell["CommandLineParser Documentation", "Title",
+ CellID->1675515026,ExpressionUUID->"ba201ac0-d2de-4ded-82b1-916299ffcc04"],
+
+Cell[CellGroupData[{
+
+Cell["Introduction", "Section",
+ CellID->647405769,ExpressionUUID->"48325981-8e86-4802-ad99-4165419d6c0d"],
+
+Cell[CellGroupData[{
+
+Cell[TextData[{
+ "CommandLineParser is means to be used from Wolfram Language scripts. Such \
+scripts should first load CommandLineParser, then specify their arguments and \
+then run ",
+ StyleBox["ParseCommandLine", "Input"],
+ ":"
+}], "Text",
+ CellID->1034221364,ExpressionUUID->"8912ac99-2f7b-44a9-a292-a25861e3256b"],
+
+Cell["\<\
+(* script.m *)
+Needs[\"Wolfram`CommandLineParser`\"];
+spec = ...;
+parsedArgs = ParseCommandLine[spec];\
+\>", "Program",
+ CellID->1867770237,ExpressionUUID->"8d03fb0e-e1b3-48d9-9f2a-095987f67710"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[TextData[{
+ "The 1-argument form ",
+ StyleBox["ParseCommandLine[spec]", "Input"],
+ " automatically grabs the list of arguments provided to the script (using ",
+ StyleBox["$CommandLine", "Input"],
+ " or ",
+ StyleBox["$ScriptCommandLine", "Input"],
+ "). In this documentation we will instead use the 2-argument form which \
+explicitly requires the argument list to be provided, e.g.:"
+}], "Text",
+ CellID->1271750588,ExpressionUUID->"52c9f8c5-6c4c-492b-8181-ebdd9fde9183"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"argsSpec", " ", "=", " ", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"{", 
+      RowBox[{"\"\<my-int-arg\>\"", " ", "->", " ", 
+       RowBox[{"NumericSpec", "[", 
+        RowBox[{"\"\<Integer\>\"", ",", " ", "\"\<An unbounded integer\>\""}],
+         "]"}]}], "}"}], ",", " ", 
+     RowBox[{"{", "}"}]}], "}"}]}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{"ParseCommandLine", "[", 
+  RowBox[{"argsSpec", ",", 
+   RowBox[{"{", "\"\<42\>\"", "}"}]}], "]"}]}], "Input",
+ CellLabel->"In[104]:=",
+ CellID->1195250426,ExpressionUUID->"0b405265-32fb-419a-b6e7-ae60767ab286"],
+
+Cell[BoxData[
+ RowBox[{"{", 
+  RowBox[{
+   RowBox[{"\[LeftAssociation]", 
+    RowBox[{"\<\"my-int-arg\"\>", "\[Rule]", "42"}], "\[RightAssociation]"}], 
+   ",", 
+   RowBox[{"\[LeftAssociation]", "\[RightAssociation]"}]}], "}"}]], "Output",
+ CellLabel->"Out[105]=",
+ CellID->1476258813,ExpressionUUID->"0cb8e3e5-756c-4f0b-a06d-40c451ba1bf8"]
+}, Open  ]]
+}, Open  ]]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["Specification & usage basics", "Section",
+ CellID->1900373546,ExpressionUUID->"e088f527-7eb7-490c-8db9-6672e57d83a2"],
+
+Cell[TextData[{
+ StyleBox["ParseCommandLine", "Input"],
+ " usually returns a list of the form ",
+ StyleBox["{parsedPosArgs, parsedOpts}", "Input"],
+ " where ",
+ StyleBox["parsedPosArgs", "Input"],
+ " and ",
+ StyleBox["parsedOpts", "Input"],
+ " are both associations containing the names and parsed values of positional \
+and optional arguments respectively. The association ",
+ StyleBox["parsedOpts", "Input"],
+ " contains all the option values, including those not specified by the \
+user."
+}], "Text",
+ CellID->1930493381,ExpressionUUID->"f7664bc1-a574-4653-aab2-d678ca137b44"],
+
+Cell[TextData[{
+ "In ",
+ StyleBox["ParseCommandLine[spec]", "Input"],
+ " argument ",
+ StyleBox["spec", "Input"],
+ " has the form ",
+ StyleBox["{posArgSpecs,optArgSpecs,helpHeader}", "Input"],
+ "or just ",
+ StyleBox["{posArgSpecs,optArgSpecs}", "Input"],
+ StyleBox[":", "MathCaption"]
+}], "Text",
+ CellID->521567689,ExpressionUUID->"9911b5dd-5768-4da0-9926-661aba65970c"],
+
+Cell[TextData[{
+ StyleBox["posArgSpecs", "Input"],
+ StyleBox[" is a list defining the specification for positional arguments \
+which should be provided in the same order from the command line. It has the \
+form ", "MathCaption"],
+ StyleBox["{argName -> argSpec, ...}", "Input"],
+ StyleBox[", where ", "MathCaption"],
+ StyleBox["argName", "Input"],
+ StyleBox[" is a string. Default values can be specified by using ", 
+  "MathCaption"],
+ StyleBox["{argName, default} -> argSpec ", "Input"],
+ StyleBox["instead. Positional arguments without defaults cannot appear after \
+positional arguments with defaults.", "MathCaption"]
+}], "Item",
+ CellID->807962465,ExpressionUUID->"588a43c9-0090-400c-b7ff-6179e8f18c77"],
+
+Cell[TextData[{
+ StyleBox["optArgSpecs", "Input"],
+ " is a list defining the specification for optional arguments. It usually \
+has the form ",
+ StyleBox["{{argName, default} -> argSpec, ...}", "Input"],
+ ", where ",
+ StyleBox["argName", "Input"],
+ " and ",
+ StyleBox["default", "Input"],
+ " are both strings. ",
+ StyleBox["default", "Input"],
+ " is the option default which is mandatory (unless the optional argument is \
+variadic, more on this in the following sections)."
+}], "Item",
+ CellID->1755609054,ExpressionUUID->"98a6fe2e-c6d0-42bf-bd00-f731c72297c4"],
+
+Cell[TextData[{
+ StyleBox["helpHeader", "Input"],
+ " is used for documentation purposes."
+}], "Item",
+ CellID->651597148,ExpressionUUID->"51ce190c-64e2-49ac-8e6e-1aa46544dc4f"],
+
+Cell[CellGroupData[{
+
+Cell["An example for a full specification is:", "Text",
+ CellID->2100936016,ExpressionUUID->"b37d0913-065d-47ee-8fcb-f1350d83d583"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"posArgSpecs", "=", 
+   RowBox[{"{", "\[IndentingNewLine]", 
+    RowBox[{
+     RowBox[{"\"\<my-string-arg\>\"", "->", 
+      RowBox[{"StringSpec", "[", "\"\<A generic string argument\>\"", "]"}]}],
+      ",", "\[IndentingNewLine]", 
+     RowBox[{"\"\<my-symbol-arg\>\"", "->", 
+      RowBox[{"EnumSpec", "[", 
+       RowBox[{
+        RowBox[{"{", 
+         RowBox[{"None", ",", "Automatic", ",", "Inherited"}], "}"}], ",", 
+        "\"\<A special symbol. Can be None, Automatic, Inherited or their \
+lower-case equivalents\>\""}], "]"}]}], ",", 
+     RowBox[{
+      RowBox[{"{", 
+       RowBox[{"\"\<my-numeric-arg\>\"", ",", "\"\<7\>\""}], "}"}], "->", 
+      RowBox[{"NumericSpec", "[", 
+       RowBox[{
+       "\"\<Integer\>\"", ",", 
+        "\"\<Any sequence of positive integers, including none\>\""}], 
+       "]"}]}]}], "\[IndentingNewLine]", "}"}]}], ";"}]], "Input",
+ CellLabel->"In[276]:=",
+ CellID->2129001455,ExpressionUUID->"c12f2d8a-9569-4265-8f85-1c2e650c1097"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"optArgSpecs", "=", 
+   RowBox[{"{", "\[IndentingNewLine]", 
+    RowBox[{
+     RowBox[{
+      RowBox[{"{", 
+       RowBox[{"\"\<my-numeric-opt\>\"", ",", "\"\<0.5\>\""}], "}"}], "->", 
+      RowBox[{"NumericSpec", "[", 
+       RowBox[{
+       "\"\<Real\>\"", ",", "\"\<A real number between 0 and 1\>\"", ",", 
+        RowBox[{"\"\<Interval\>\"", "->", 
+         RowBox[{"{", 
+          RowBox[{"0", ",", "1"}], "}"}]}]}], "]"}]}], ",", 
+     "\[IndentingNewLine]", 
+     RowBox[{
+      RowBox[{"{", 
+       RowBox[{"\"\<my-boolean-opt\>\"", ",", "\"\<false\>\""}], "}"}], "->", 
+      
+      RowBox[{"BooleanSpec", "[", "\"\<A boolean\>\"", "]"}]}]}], 
+    "\[IndentingNewLine]", "}"}]}], ";"}]], "Input",
+ CellLabel->"In[277]:=",
+ CellID->1124328272,ExpressionUUID->"fb186162-9f9a-4db6-ad23-c3f3cb0275b3"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"helpHeader", "=", "\"\<Welcome to my script!\>\""}], 
+  ";"}]], "Input",
+ CellLabel->"In[108]:=",
+ CellID->809878666,ExpressionUUID->"4712732d-f210-46d3-afe8-5a13c8006521"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"spec", "=", 
+   RowBox[{"{", 
+    RowBox[{"posArgSpecs", ",", "optArgSpecs", ",", "helpHeader"}], "}"}]}], 
+  ";"}]], "Input",
+ CellLabel->"In[109]:=",
+ CellID->1920330154,ExpressionUUID->"adb65f65-d111-469e-a70a-bc2bcaf35dc9"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[TextData[{
+ "The command line arguments provided by the user are expected to have the \
+form ",
+ StyleBox["pos-arg-1 pos-arg-2 --opt-1=xxx --opt2=yyy", "Program"],
+ ", with all the positional arguments in the correct order first and all the \
+desired optional arguments in any order after:"
+}], "Text",
+ CellID->562602704,ExpressionUUID->"3e1634a6-1536-4211-8886-0fcf5bf791f4"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"ParseCommandLine", "[", 
+  RowBox[{"spec", ",", 
+   RowBox[{"{", 
+    RowBox[{
+    "\"\<hello\>\"", ",", "\"\<none\>\"", ",", "\"\<5\>\"", ",", 
+     "\"\<--my-numeric-opt=0.41\>\""}], "}"}]}], "]"}]], "Input",
+ CellLabel->"In[278]:=",
+ CellID->844614861,ExpressionUUID->"13f942d0-ed3c-406a-91d9-632e2f326ab3"],
+
+Cell[BoxData[
+ RowBox[{"{", 
+  RowBox[{
+   RowBox[{"\[LeftAssociation]", 
+    RowBox[{
+     RowBox[{"\<\"my-string-arg\"\>", "\[Rule]", "\<\"hello\"\>"}], ",", 
+     RowBox[{"\<\"my-symbol-arg\"\>", "\[Rule]", "None"}], ",", 
+     RowBox[{"\<\"my-numeric-arg\"\>", "\[Rule]", "5"}]}], 
+    "\[RightAssociation]"}], ",", 
+   RowBox[{"\[LeftAssociation]", 
+    RowBox[{
+     RowBox[{"\<\"my-numeric-opt\"\>", "\[Rule]", "0.41`"}], ",", 
+     RowBox[{"\<\"my-boolean-opt\"\>", "\[Rule]", "False"}]}], 
+    "\[RightAssociation]"}]}], "}"}]], "Output",
+ CellLabel->"Out[278]=",
+ CellID->672736176,ExpressionUUID->"af92e896-dd9a-4cf1-b6d3-b7ad67f248b6"]
+}, Open  ]]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["\<\
+Positional arguments with defaults (\"my-numeric-arg\") can be omitted:\
+\>", "Text",
+ CellID->1573542647,ExpressionUUID->"b71efba5-a3bc-494e-8861-02fc35697831"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"ParseCommandLine", "[", 
+  RowBox[{"spec", ",", 
+   RowBox[{"{", 
+    RowBox[{
+    "\"\<hello\>\"", ",", "\"\<none\>\"", ",", 
+     "\"\<--my-numeric-opt=0.41\>\""}], "}"}]}], "]"}]], "Input",
+ CellLabel->"In[280]:=",
+ CellID->358679192,ExpressionUUID->"52ae4d1b-e64d-4974-a4b2-7d3f24690c86"],
+
+Cell[BoxData[
+ RowBox[{"{", 
+  RowBox[{
+   RowBox[{"\[LeftAssociation]", 
+    RowBox[{
+     RowBox[{"\<\"my-string-arg\"\>", "\[Rule]", "\<\"hello\"\>"}], ",", 
+     RowBox[{"\<\"my-symbol-arg\"\>", "\[Rule]", "None"}], ",", 
+     RowBox[{"\<\"my-numeric-arg\"\>", "\[Rule]", "7"}]}], 
+    "\[RightAssociation]"}], ",", 
+   RowBox[{"\[LeftAssociation]", 
+    RowBox[{
+     RowBox[{"\<\"my-numeric-opt\"\>", "\[Rule]", "0.41`"}], ",", 
+     RowBox[{"\<\"my-boolean-opt\"\>", "\[Rule]", "False"}]}], 
+    "\[RightAssociation]"}]}], "}"}]], "Output",
+ CellLabel->"Out[280]=",
+ CellID->1135027096,ExpressionUUID->"b56d97f4-d7f3-43a9-a742-69b14556b72d"]
+}, Open  ]]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[TextData[{
+ "For optional arguments ",
+ StyleBox["--opt-name", "Program"],
+ " is interpreted as ",
+ StyleBox["--opt-name=True", "Program"],
+ "."
+}], "Text",
+ CellID->1083065045,ExpressionUUID->"c2f5941c-80c5-4b33-8117-e9030d6c9089"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"ParseCommandLine", "[", 
+  RowBox[{"spec", ",", 
+   RowBox[{"{", 
+    RowBox[{
+    "\"\<hello\>\"", ",", "\"\<none\>\"", ",", "\"\<--my-boolean-opt\>\""}], 
+    "}"}]}], "]"}]], "Input",
+ CellLabel->"In[281]:=",
+ CellID->764238989,ExpressionUUID->"17bc0561-52e5-451e-aea0-5cb222ac9f9f"],
+
+Cell[BoxData[
+ RowBox[{"{", 
+  RowBox[{
+   RowBox[{"\[LeftAssociation]", 
+    RowBox[{
+     RowBox[{"\<\"my-string-arg\"\>", "\[Rule]", "\<\"hello\"\>"}], ",", 
+     RowBox[{"\<\"my-symbol-arg\"\>", "\[Rule]", "None"}], ",", 
+     RowBox[{"\<\"my-numeric-arg\"\>", "\[Rule]", "7"}]}], 
+    "\[RightAssociation]"}], ",", 
+   RowBox[{"\[LeftAssociation]", 
+    RowBox[{
+     RowBox[{"\<\"my-numeric-opt\"\>", "\[Rule]", "0.5`"}], ",", 
+     RowBox[{"\<\"my-boolean-opt\"\>", "\[Rule]", "True"}]}], 
+    "\[RightAssociation]"}]}], "}"}]], "Output",
+ CellLabel->"Out[281]=",
+ CellID->176631197,ExpressionUUID->"9c1ccd4f-240a-4fe3-be33-109fa07c091e"]
+}, Open  ]]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[TextData[{
+ "If the list of arguments contains ",
+ StyleBox["--help", "Program"],
+ " in any position, an auto-generated help message is printed. The message \
+uses the information provided in the argument specs to document all available \
+arguments and options. ",
+ StyleBox["helpHeader", "Input"],
+ " is prepended to the message if present:"
+}], "Text",
+ CellID->695817787,ExpressionUUID->"7eaf6c8f-1192-4352-bb4a-d487d93d7f3d"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"ParseCommandLine", "[", 
+  RowBox[{"spec", ",", 
+   RowBox[{"{", "\"\<--help\>\"", "}"}]}], "]"}]], "Input",
+ CellLabel->"In[282]:=",
+ CellID->547248722,ExpressionUUID->"62eaea5b-25ad-4ca3-a046-782c80868ee6"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData["\<\"Welcome to my script!\"\>"], "Print",
+ CellLabel->"During evaluation of In[282]:=",
+ CellID->1131589277,ExpressionUUID->"c30822be-2cd4-4ecd-af30-a5d28d892e22"],
+
+Cell[BoxData["\<\"\"\>"], "Print",
+ CellLabel->"During evaluation of In[282]:=",
+ CellID->587714394,ExpressionUUID->"991ada43-dfe7-46af-8a70-24c0b187ebec"],
+
+Cell[BoxData["\<\"* Mandatory positional arguments:\"\>"], "Print",
+ CellLabel->"During evaluation of In[282]:=",
+ CellID->678664070,ExpressionUUID->"39bb7fd5-1f23-45d3-8d38-0b61027f9c38"],
+
+Cell[BoxData["\<\"NAME             DOCUMENTATION\"\>"], "Print",
+ CellLabel->"During evaluation of In[282]:=",
+ CellID->1546429918,ExpressionUUID->"efb4374d-14d0-4d35-aea0-54d8f4763a17"],
+
+Cell[BoxData["\<\"my-string-arg    A generic string argument\"\>"], "Print",
+ CellLabel->"During evaluation of In[282]:=",
+ CellID->853318401,ExpressionUUID->"00b1a201-b964-4089-a609-6c89b5372581"],
+
+Cell[BoxData["\<\"my-symbol-arg    A special symbol. Can be None, Automatic, \
+Inherited or their lower-case equivalents\"\>"], "Print",
+ CellLabel->"During evaluation of In[282]:=",
+ CellID->65455479,ExpressionUUID->"7712c63a-a1b8-47d1-82ed-8fef0b266bc3"],
+
+Cell[BoxData["\<\"\"\>"], "Print",
+ CellLabel->"During evaluation of In[282]:=",
+ CellID->341605777,ExpressionUUID->"065cd23d-b53c-46be-888f-daa6e693f8d5"],
+
+Cell[BoxData["\<\"* Optional positional arguments (must be passed in this \
+order after the mandatory arguments):\"\>"], "Print",
+ CellLabel->"During evaluation of In[282]:=",
+ CellID->962706936,ExpressionUUID->"a218dbef-360b-4ec7-be0a-7764eac53b90"],
+
+Cell[BoxData["\<\"NAME              DEFAULT    DOCUMENTATION\"\>"], "Print",
+ CellLabel->"During evaluation of In[282]:=",
+ CellID->132489678,ExpressionUUID->"182cfa24-b3d0-4d90-9dc4-70484567bea5"],
+
+Cell[BoxData["\<\"my-numeric-arg    7          Any sequence of positive \
+integers, including none\"\>"], "Print",
+ CellLabel->"During evaluation of In[282]:=",
+ CellID->1620214036,ExpressionUUID->"053adc65-0fb7-4e3f-bbd7-4cba952d6d18"],
+
+Cell[BoxData["\<\"\"\>"], "Print",
+ CellLabel->"During evaluation of In[282]:=",
+ CellID->770637458,ExpressionUUID->"0184da1e-6987-4906-9d91-8ec1544abb00"],
+
+Cell[BoxData["\<\"* Optional arguments (must be passed as --name=... in any \
+order):\"\>"], "Print",
+ CellLabel->"During evaluation of In[282]:=",
+ CellID->1517831277,ExpressionUUID->"980bf825-b7c4-4834-bd93-2c9f740cc354"],
+
+Cell[BoxData["\<\"NAME              DEFAULT    DOCUMENTATION\"\>"], "Print",
+ CellLabel->"During evaluation of In[282]:=",
+ CellID->75591928,ExpressionUUID->"586a0c6a-cb56-4306-ba60-7361d18c5de0"],
+
+Cell[BoxData["\<\"my-numeric-opt    0.5        A real number between 0 and \
+1\"\>"], "Print",
+ CellLabel->"During evaluation of In[282]:=",
+ CellID->188468533,ExpressionUUID->"4e21cbaf-a265-4559-911e-b30627751b33"],
+
+Cell[BoxData["\<\"my-boolean-opt    false      A boolean\"\>"], "Print",
+ CellLabel->"During evaluation of In[282]:=",
+ CellID->1195871612,ExpressionUUID->"9e769077-184b-4d1c-9e45-95643d2208e7"]
+}, Open  ]],
+
+Cell[BoxData["$Aborted"], "Output",
+ CellLabel->"Out[282]=",
+ CellID->241260088,ExpressionUUID->"fca6a0d0-0a3e-4ee3-ac9d-4f033cfb20f6"]
+}, Open  ]]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[TextData[{
+ "If a parsing error occurs, ",
+ StyleBox["ParseCommandLine", "Input"],
+ " will output an informative message and call ",
+ StyleBox["Abort[]", "Input"],
+ " in order to immediately exit the script:"
+}], "Text",
+ CellID->672156452,ExpressionUUID->"97bcb92b-18d7-43ea-9783-a42855756e20"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"ParseCommandLine", "[", 
+  RowBox[{"spec", ",", 
+   RowBox[{"{", 
+    RowBox[{"\"\<hello\>\"", ",", "\"\<badValue\>\""}], "}"}]}], 
+  "]"}]], "Input",
+ CellLabel->"In[283]:=",
+ CellID->865395420,ExpressionUUID->"136516c9-4d7e-466b-a9c3-1c9660b24592"],
+
+Cell[BoxData[
+ TemplateBox[{
+  "ParseCommandLine", "nomatch", 
+   "\"\\!\\(\\*RowBox[{\\\"\\\\\\\"Positional\\\\\\\"\\\"}]\\) argument \
+\\!\\(\\*RowBox[{\\\"\\\\\\\"my-symbol-arg (position 2)\\\\\\\"\\\"}]\\) was \
+\\!\\(\\*RowBox[{\\\"\\\\\\\"badValue\\\\\\\"\\\"}]\\), which is an invalid \
+value. Documentation string for the argument is: \
+\\\"\\!\\(\\*RowBox[{\\\"\\\\\\\"A special symbol. Can be None, Automatic, \
+Inherited or their lower-case equivalents\\\\\\\"\\\"}]\\)\\\".\"", 2, 283, 
+   25, 34434383229564482630, "Local", 
+   "Wolfram`CommandLineParser`ParseCommandLine"},
+  "MessageTemplate2"]], "Message", "MSG",
+ CellLabel->"During evaluation of In[283]:=",
+ CellID->1535590104,ExpressionUUID->"143ec97c-d4ec-4b36-b391-ad1b625b44b1"],
+
+Cell[BoxData["$Aborted"], "Output",
+ CellLabel->"Out[283]=",
+ CellID->1759281200,ExpressionUUID->"157c1adb-c6d4-433b-af9f-25e456801a64"]
+}, Open  ]]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[TextData[{
+ "The call to ",
+ StyleBox["Abort[]", "Input"],
+ " can be avoided by setting the option ",
+ StyleBox["\"ReturnOnError\" -> True", "Input"],
+ ", in which case ",
+ StyleBox["ParseCommandLine", "Input"],
+ " will return ",
+ StyleBox["$Failed", "Input"],
+ " and the script execution will continue:"
+}], "Text",
+ CellID->350146695,ExpressionUUID->"5a8f642b-281c-470f-a8a6-89e35819705c"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"ParseCommandLine", "[", 
+  RowBox[{"spec", ",", 
+   RowBox[{"{", 
+    RowBox[{"\"\<hello\>\"", ",", "\"\<badValue\>\""}], "}"}], ",", 
+   RowBox[{"\"\<ReturnOnError\>\"", "->", "True"}]}], "]"}]], "Input",
+ CellLabel->"In[285]:=",
+ CellID->1069500947,ExpressionUUID->"e0f3134b-7351-4295-89fb-80f534b7df57"],
+
+Cell[BoxData[
+ TemplateBox[{
+  "ParseCommandLine", "nomatch", 
+   "\"\\!\\(\\*RowBox[{\\\"\\\\\\\"Positional\\\\\\\"\\\"}]\\) argument \
+\\!\\(\\*RowBox[{\\\"\\\\\\\"my-symbol-arg (position 2)\\\\\\\"\\\"}]\\) was \
+\\!\\(\\*RowBox[{\\\"\\\\\\\"badValue\\\\\\\"\\\"}]\\), which is an invalid \
+value. Documentation string for the argument is: \
+\\\"\\!\\(\\*RowBox[{\\\"\\\\\\\"A special symbol. Can be None, Automatic, \
+Inherited or their lower-case equivalents\\\\\\\"\\\"}]\\)\\\".\"", 2, 285, 
+   27, 34434383229564482630, "Local", 
+   "Wolfram`CommandLineParser`ParseCommandLine"},
+  "MessageTemplate2"]], "Message", "MSG",
+ CellLabel->"During evaluation of In[285]:=",
+ CellID->326999766,ExpressionUUID->"a03cc3f9-e338-4e05-9ca9-6197ab02f5bb"],
+
+Cell[BoxData["$Failed"], "Output",
+ CellLabel->"Out[285]=",
+ CellID->1189826012,ExpressionUUID->"22f5ed06-16b6-433c-9ef6-cd7449164bc9"]
+}, Open  ]]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[TextData[{
+ "Similarly, ",
+ StyleBox["Abort[]", "Input"],
+ " will also be called when the help message is printed, which can be \
+prevented by setting ",
+ StyleBox["\"ReturnOnHelp\" -> True", "Input"],
+ ". In this case ",
+ StyleBox["ParseCommandLine", "Input"],
+ " will return ",
+ StyleBox["Null", "Input"],
+ "."
+}], "Text",
+ CellID->1590212378,ExpressionUUID->"7f71f8ac-1d78-4d9f-acfe-1504e1052b8c"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"ParseCommandLine", "[", 
+  RowBox[{"spec", ",", 
+   RowBox[{"{", "\"\<--help\>\"", "}"}], ",", 
+   RowBox[{"\"\<ReturnOnHelp\>\"", "->", "True"}]}], "]"}]], "Input",
+ CellLabel->"In[287]:=",
+ CellID->128836534,ExpressionUUID->"66482022-e614-47c6-add2-0aedd5c67dc9"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData["\<\"Welcome to my script!\"\>"], "Print",
+ CellLabel->"During evaluation of In[287]:=",
+ CellID->167192107,ExpressionUUID->"27c034f9-f502-44ea-af85-06ad068a2680"],
+
+Cell[BoxData["\<\"\"\>"], "Print",
+ CellLabel->"During evaluation of In[287]:=",
+ CellID->1970730089,ExpressionUUID->"d343982a-51ea-40a7-9387-bf13edf90e9d"],
+
+Cell[BoxData["\<\"* Mandatory positional arguments:\"\>"], "Print",
+ CellLabel->"During evaluation of In[287]:=",
+ CellID->1267364921,ExpressionUUID->"138c9bbf-d400-4309-bad1-537f1ee28f03"],
+
+Cell[BoxData["\<\"NAME             DOCUMENTATION\"\>"], "Print",
+ CellLabel->"During evaluation of In[287]:=",
+ CellID->937829565,ExpressionUUID->"2dc295ca-0966-4309-bc0b-e84435faa239"],
+
+Cell[BoxData["\<\"my-string-arg    A generic string argument\"\>"], "Print",
+ CellLabel->"During evaluation of In[287]:=",
+ CellID->1341077718,ExpressionUUID->"23d9d91b-b8de-4139-87d7-e66db2b391f8"],
+
+Cell[BoxData["\<\"my-symbol-arg    A special symbol. Can be None, Automatic, \
+Inherited or their lower-case equivalents\"\>"], "Print",
+ CellLabel->"During evaluation of In[287]:=",
+ CellID->1342956849,ExpressionUUID->"5007d1ca-0c09-4f70-ac59-e46d339f32ef"],
+
+Cell[BoxData["\<\"\"\>"], "Print",
+ CellLabel->"During evaluation of In[287]:=",
+ CellID->1126298098,ExpressionUUID->"bc9b43da-7ca6-4f2e-82bd-c0f3e7a4d70a"],
+
+Cell[BoxData["\<\"* Optional positional arguments (must be passed in this \
+order after the mandatory arguments):\"\>"], "Print",
+ CellLabel->"During evaluation of In[287]:=",
+ CellID->389465683,ExpressionUUID->"a469c06c-87ed-4d68-b1ac-f41d89db3dc7"],
+
+Cell[BoxData["\<\"NAME              DEFAULT    DOCUMENTATION\"\>"], "Print",
+ CellLabel->"During evaluation of In[287]:=",
+ CellID->1584216937,ExpressionUUID->"5a15fbd9-501e-456e-85b0-a83b22bbad62"],
+
+Cell[BoxData["\<\"my-numeric-arg    7          Any sequence of positive \
+integers, including none\"\>"], "Print",
+ CellLabel->"During evaluation of In[287]:=",
+ CellID->514404555,ExpressionUUID->"2b13b7c7-e827-41b5-a9a9-cb6a04d36932"],
+
+Cell[BoxData["\<\"\"\>"], "Print",
+ CellLabel->"During evaluation of In[287]:=",
+ CellID->1263235,ExpressionUUID->"3e202cc3-cb71-4323-b4ff-7b19da4ff3fc"],
+
+Cell[BoxData["\<\"* Optional arguments (must be passed as --name=... in any \
+order):\"\>"], "Print",
+ CellLabel->"During evaluation of In[287]:=",
+ CellID->680484039,ExpressionUUID->"e6bb1077-2da3-49ce-8896-7bf9296c23f1"],
+
+Cell[BoxData["\<\"NAME              DEFAULT    DOCUMENTATION\"\>"], "Print",
+ CellLabel->"During evaluation of In[287]:=",
+ CellID->1561092540,ExpressionUUID->"2e3be9cd-16fa-410f-9426-471b86376e78"],
+
+Cell[BoxData["\<\"my-numeric-opt    0.5        A real number between 0 and \
+1\"\>"], "Print",
+ CellLabel->"During evaluation of In[287]:=",
+ CellID->351409930,ExpressionUUID->"3306b398-f41e-4c1e-98dd-f800d55895ac"],
+
+Cell[BoxData["\<\"my-boolean-opt    false      A boolean\"\>"], "Print",
+ CellLabel->"During evaluation of In[287]:=",
+ CellID->1007483805,ExpressionUUID->"f7098279-44b0-474b-943c-4b2449d225cc"]
+}, Open  ]]
+}, Open  ]]
+}, Open  ]]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["Argument specifications", "Section",
+ CellID->1079467827,ExpressionUUID->"c33d2c97-1174-4f65-8f7c-aebbfb75ff72"],
+
+Cell[TextData[{
+ "There are two ways of defining arguments for ",
+ StyleBox["ParseCommandLine", "Input"],
+ ": a low-level specification format and a set of high-level helpers to \
+generate said low-level specifications for common use cases (numeric \
+arguments, boolean arguments, ...)."
+}], "Text",
+ CellID->1694634155,ExpressionUUID->"9120f810-147b-4e7e-a75d-e02b9b208254"],
+
+Cell[CellGroupData[{
+
+Cell["Low-level argument specification", "Subsection",
+ CellID->1293484365,ExpressionUUID->"1a70474d-7a06-4367-92ef-cfa0ae0558ca"],
+
+Cell[TextData[{
+ "The low-level argument specification is a list of the form ",
+ StyleBox["{stringPatt,parser,postCheck, variadic,docString}", "Input"],
+ StyleBox[":", "MathCaption"]
+}], "Text",
+ CellID->1045274375,ExpressionUUID->"e8fdc2a4-8fa3-43d1-87fa-9145fdf6063e"],
+
+Cell[TextData[{
+ StyleBox["stringPatt", "Input"],
+ " is a string pattern that validates the input string from the command line. \
+The input string must ",
+ Cell[BoxData[
+  ButtonBox["StringMatchQ",
+   BaseStyle->"Link"]], "InlineFormula",ExpressionUUID->
+  "0ea54461-fc3b-43aa-a8d6-366c96abe7d0"],
+ " with ",
+ StyleBox["stringPatt", "Input"],
+ ", otherwise an error is generated."
+}], "Item",
+ CellID->971235157,ExpressionUUID->"1082a782-adee-4303-a379-02d098ecef7a"],
+
+Cell[TextData[{
+ StyleBox["parser", "Input"],
+ " is a ",
+ Cell[BoxData[
+  ButtonBox["Function",
+   BaseStyle->"Link"]], "InlineFormula",ExpressionUUID->
+  "75e254c3-528b-4797-a1f1-efaa28c49c40"],
+ " object that is applied to the input string (after string pattern \
+validation) and produces the desired final expression."
+}], "Item",
+ CellID->1050787854,ExpressionUUID->"ee3ff76c-7bfb-4457-8c05-a82c580a1224"],
+
+Cell[TextData[{
+ StyleBox["postCheck", "Input"],
+ " is a ",
+ Cell[BoxData[
+  ButtonBox["Function",
+   BaseStyle->"Link"]], "InlineFormula",ExpressionUUID->
+  "c76948f1-0a05-4d0b-ac15-e4b3bff1345e"],
+ " object that is applied to the output of ",
+ StyleBox["parser", "Input"],
+ " and can check its value. It should return ",
+ Cell[BoxData[
+  ButtonBox["True",
+   BaseStyle->"Link"]], "InlineFormula",ExpressionUUID->
+  "5ed62160-3f22-437d-af26-e36cb0d61afc"],
+ " in case the check is successful, otherwise an error is generated."
+}], "Item",
+ CellID->2010106845,ExpressionUUID->"17eb6963-6849-456d-a5c7-2ee54f5fc3bb"],
+
+Cell[TextData[{
+ StyleBox["variadic", "Input"],
+ " is a boolean that specifies if the given argument is variadic (more on \
+this in the following sections)"
+}], "Item",
+ CellID->2040736104,ExpressionUUID->"ea6dca88-9edc-4aed-b4ad-cd7ad0ed3ad9"],
+
+Cell[TextData[{
+ StyleBox["docString", "Input"],
+ " is a documentation string for the argument and its allowed values. It is \
+shown in parsing error messages and in the auto-generated help message (",
+ StyleBox["--help", "Program"],
+ ")."
+}], "Item",
+ CellID->1124020976,ExpressionUUID->"77026bd3-024d-4046-9b67-9e5c4a54f9fb"],
+
+Cell[CellGroupData[{
+
+Cell["\<\
+Here is an example of a low level argument specification. It accepts a number \
+string or the string \"pi\", the parser converts the input string to a number \
+and the checker constrains the parsed value to be less than 10. The parser \
+and checker produce a print when they are ran:\
+\>", "Text",
+ CellID->1720531191,ExpressionUUID->"726f6869-7eb1-4c39-8b83-e6bf6e870ef2"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"stringPatt", "=", 
+   RowBox[{"NumberString", "|", "\"\<pi\>\""}]}], 
+  ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"parser", "=", 
+   RowBox[{"Function", "[", "\[IndentingNewLine]", 
+    RowBox[{
+     RowBox[{"Print", "[", "\"\<Running parser\>\"", "]"}], ";", 
+     "\[IndentingNewLine]", 
+     RowBox[{"Replace", "[", 
+      RowBox[{"#", ",", " ", 
+       RowBox[{"{", 
+        RowBox[{
+         RowBox[{"\"\<pi\>\"", "->", "Pi"}], ",", 
+         RowBox[{"n_", ":>", 
+          RowBox[{"ToExpression", "[", "n", "]"}]}]}], "}"}]}], "]"}]}], 
+    "\[IndentingNewLine]", "]"}]}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"postCheck", "=", 
+   RowBox[{"Function", "[", "\[IndentingNewLine]", 
+    RowBox[{
+     RowBox[{"Print", "[", "\"\<Running check\>\"", "]"}], ";", 
+     "\[IndentingNewLine]", 
+     RowBox[{"#", "<", "10"}]}], "\[IndentingNewLine]", "]"}]}], 
+  ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"variadic", "=", "False"}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"docString", "=", "\"\<Either a number less than 10 or pi\>\""}], 
+  ";"}]}], "Input",
+ CellLabel->"In[288]:=",
+ CellID->1903995880,ExpressionUUID->"d3b02f38-e0cf-46dc-9d69-bee7270ae61a"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"lowLevelArgSpec", "=", 
+   RowBox[{"{", 
+    RowBox[{
+    "stringPatt", ",", "parser", ",", "postCheck", ",", "variadic", ",", 
+     "docString"}], "}"}]}], ";"}]], "Input",
+ CellLabel->"In[293]:=",
+ CellID->1591694657,ExpressionUUID->"f33df24e-abc1-4a90-9166-10190417364b"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["\<\
+The above argument specification can be used to build a full parser \
+specification for a command line interface that takes a single positional \
+argument:\
+\>", "Text",
+ CellID->2114921847,ExpressionUUID->"19a9103e-01ae-43af-8c45-ffe01bb87d83"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"parserSpec", "=", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"{", 
+      RowBox[{"\"\<my-arg\>\"", "->", "lowLevelArgSpec"}], "}"}], ",", 
+     RowBox[{"{", "}"}]}], "}"}]}], ";"}]], "Input",
+ CellLabel->"In[294]:=",
+ CellID->1505545673,ExpressionUUID->"234a42af-8c3d-47fa-9c19-b94af6a89cef"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"ParseCommandLine", "[", 
+  RowBox[{"parserSpec", ",", 
+   RowBox[{"{", "\"\<2.3\>\"", "}"}]}], "]"}]], "Input",
+ CellLabel->"In[295]:=",
+ CellID->192587457,ExpressionUUID->"d8135e8f-b7b7-47ff-8807-fadd01ce366d"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData["\<\"Running parser\"\>"], "Print",
+ CellLabel->"During evaluation of In[295]:=",
+ CellID->603434904,ExpressionUUID->"d9caddc0-318c-4fe3-983f-89ef7616eb79"],
+
+Cell[BoxData["\<\"Running check\"\>"], "Print",
+ CellLabel->"During evaluation of In[295]:=",
+ CellID->1321350136,ExpressionUUID->"89ea2e70-ba37-4c9b-8ee1-a9730c65bd5f"]
+}, Open  ]],
+
+Cell[BoxData[
+ RowBox[{"{", 
+  RowBox[{
+   RowBox[{"\[LeftAssociation]", 
+    RowBox[{"\<\"my-arg\"\>", "\[Rule]", "2.3`"}], "\[RightAssociation]"}], 
+   ",", 
+   RowBox[{"\[LeftAssociation]", "\[RightAssociation]"}]}], "}"}]], "Output",
+ CellLabel->"Out[295]=",
+ CellID->1252237293,ExpressionUUID->"4a983dc8-8440-4808-b513-edd6d63c321c"]
+}, Open  ]]
+}, Open  ]]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["High-level argument helpers", "Subsection",
+ CellID->488094478,ExpressionUUID->"7b70fad8-ae67-4c0d-ad9c-55de3158badd"],
+
+Cell[CellGroupData[{
+
+Cell["\<\
+High level helpers which create argument specifications are available for the \
+most common cases. These helpers are just functions that output low-level \
+specifications described above, e.g.\
+\>", "Text",
+ CellID->718163995,ExpressionUUID->"3c58fd92-3ad2-4f6f-9b24-036631e2e79d"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"NumericSpec", "[", 
+  RowBox[{
+  "\"\<Integer\>\"", ",", 
+   "\"\<An integer larger than 6. Infinity is also allowed.\>\"", ",", 
+   RowBox[{"\"\<Interval\>\"", "->", 
+    RowBox[{"{", 
+     RowBox[{"6", ",", "Infinity"}], "}"}]}], ",", 
+   RowBox[{"\"\<AllowInfinity\>\"", "->", "True"}]}], "]"}]], "Input",
+ CellLabel->"In[296]:=",
+ CellID->1513160220,ExpressionUUID->"c819e646-61c3-4c05-a65d-7349c6159261"],
+
+Cell[BoxData[
+ RowBox[{"{", 
+  RowBox[{
+   RowBox[{
+   "NumberString", "|", "\<\"infinity\"\>", "|", "\<\"Infinity\"\>", 
+    "|", "\<\"-infinity\"\>", "|", "\<\"-Infinity\"\>"}], ",", 
+   RowBox[{
+    RowBox[{"Replace", "[", 
+     RowBox[{"#1", ",", 
+      RowBox[{"{", 
+       RowBox[{
+        RowBox[{
+         RowBox[{"\<\"infinity\"\>", "|", "\<\"Infinity\"\>"}], "\[Rule]", 
+         "\[Infinity]"}], ",", 
+        RowBox[{
+         RowBox[{"\<\"-infinity\"\>", "|", "\<\"-Infinity\"\>"}], "\[Rule]", 
+         RowBox[{"-", "\[Infinity]"}]}], ",", 
+        RowBox[{"Wolfram`CommandLineParser`Private`n_", "\[RuleDelayed]", 
+         RowBox[{
+         "ToExpression", "[", "Wolfram`CommandLineParser`Private`n", 
+          "]"}]}]}], "}"}]}], "]"}], "&"}], ",", 
+   RowBox[{"Function", "[", 
+    RowBox[{
+     RowBox[{"{", "Wolfram`CommandLineParser`Private`val$", "}"}], ",", 
+     RowBox[{"And", "@@", 
+      RowBox[{
+       RowBox[{"(", 
+        RowBox[{
+         RowBox[{"#1", "[", "Wolfram`CommandLineParser`Private`val$", "]"}], 
+         "&"}], ")"}], "/@", 
+       RowBox[{"{", 
+        RowBox[{
+         RowBox[{
+          RowBox[{"IntervalMemberQ", "[", 
+           RowBox[{
+            RowBox[{"Interval", "[", 
+             RowBox[{"{", 
+              RowBox[{"6", ",", "\[Infinity]"}], "}"}], "]"}], ",", "#1"}], 
+           "]"}], "&"}], ",", 
+         RowBox[{
+          RowBox[{
+           RowBox[{"IntegerQ", "[", "#1", "]"}], "||", 
+           RowBox[{"MatchQ", "[", 
+            RowBox[{"#1", ",", 
+             RowBox[{"DirectedInfinity", "[", 
+              RowBox[{
+               RowBox[{"-", "1"}], "|", "1"}], "]"}]}], "]"}]}], "&"}]}], 
+        "}"}]}]}]}], "]"}], ",", "False", 
+   ",", "\<\"An integer larger than 6. Infinity is also allowed.\"\>"}], 
+  "}"}]], "Output",
+ CellLabel->"Out[296]=",
+ CellID->1934115660,ExpressionUUID->"8fa89f38-51f3-405d-b547-0f3a8f175027"]
+}, Open  ]]
+}, Open  ]],
+
+Cell["\<\
+As shown in the above example, low-level specifications produced by the \
+helpers can become verbose, but the developer doesn't have to interact with \
+them directly.\
+\>", "Text",
+ CellID->1600724638,ExpressionUUID->"bdcebd8a-9291-4a2f-a5d6-5951b08c0e4c"],
+
+Cell[TextData[{
+ StyleBox["StringSpec[docString]", "Input"],
+ " generates a specification for a string that is taken verbatim from the \
+command line. No transformation or check is performed."
+}], "Text",
+ CellID->101741637,ExpressionUUID->"2a23e5c2-5cc5-4e94-b897-3a1e71e113e8"],
+
+Cell[TextData[{
+ StyleBox["docString", "Input"],
+ " is the documentation string for the argument"
+}], "Item",
+ CellID->394320490,ExpressionUUID->"f0898afa-14c3-4249-a2f9-b251d2202d42"],
+
+Cell[CellGroupData[{
+
+Cell[TextData[{
+ "Can set the option ",
+ StyleBox["\"Variadic\" -> True", "Input"],
+ " to make it variadic (more on this in the following sections)"
+}], "Item",
+ CellID->34104332,ExpressionUUID->"00527cfe-a9b0-40c5-af66-574c909f4332"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"posArgSpec", "=", 
+   RowBox[{"{", 
+    RowBox[{"\"\<arg\>\"", "->", 
+     RowBox[{"StringSpec", "[", "\"\<A generic string argument\>\"", "]"}]}], 
+    "}"}]}], ";"}], "\n", 
+ RowBox[{"ParseCommandLine", "[", 
+  RowBox[{
+   RowBox[{"{", 
+    RowBox[{"posArgSpec", ",", 
+     RowBox[{"{", "}"}]}], "}"}], ",", 
+   RowBox[{"{", "\"\<hello\>\"", "}"}]}], "]"}]}], "Input",
+ CellLabel->"In[297]:=",
+ CellID->1652755048,ExpressionUUID->"53d3d1d7-c38c-4c80-963a-f9787be5140e"],
+
+Cell[BoxData[
+ RowBox[{"{", 
+  RowBox[{
+   RowBox[{"\[LeftAssociation]", 
+    RowBox[{"\<\"arg\"\>", "\[Rule]", "\<\"hello\"\>"}], 
+    "\[RightAssociation]"}], ",", 
+   RowBox[{"\[LeftAssociation]", "\[RightAssociation]"}]}], "}"}]], "Output",
+ CellLabel->"Out[298]=",
+ CellID->97259063,ExpressionUUID->"16846ca7-e8dc-4d70-ace0-870adb225434"]
+}, Open  ]]
+}, Open  ]],
+
+Cell[TextData[{
+ StyleBox["BooleanSpec[docString]", "Input"],
+ " generates a specification for a boolean. The value returned by the parser \
+is either ",
+ Cell[BoxData[
+  ButtonBox["True",
+   BaseStyle->"Link"]], "InlineFormula",ExpressionUUID->
+  "8a249766-6345-492d-8d91-119742a2a1e5"],
+ " or ",
+ Cell[BoxData[
+  ButtonBox["False",
+   BaseStyle->"Link"]], "InlineFormula",ExpressionUUID->
+  "98064dea-348d-4139-a34d-fb4e438020b7"],
+ ", and command line input can be ",
+ StyleBox["True", "Program"],
+ ", ",
+ StyleBox["False", "Program"],
+ " or their lower-cased equivalents."
+}], "Text",
+ CellID->171906296,ExpressionUUID->"714d5dfc-7e9c-4c4e-bf79-c987167d2fe3"],
+
+Cell[TextData[{
+ StyleBox["docString", "Input"],
+ " is the documentation string for the argument"
+}], "Item",
+ CellID->1274015879,ExpressionUUID->"0bf657ff-817a-4389-ac2c-4b4f053633fe"],
+
+Cell[CellGroupData[{
+
+Cell[TextData[{
+ "Can set the option ",
+ StyleBox["\"Variadic\" -> True", "Input"],
+ " to make it variadic (more on this in the following sections)"
+}], "Item",
+ CellID->529653108,ExpressionUUID->"aea5d97b-9af1-43f6-8c62-115e45e71009"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"posArgSpec", " ", "=", " ", 
+   RowBox[{"{", 
+    RowBox[{"\"\<arg\>\"", " ", "->", " ", 
+     RowBox[{"BooleanSpec", "[", "\"\<A boolean argument\>\"", "]"}]}], 
+    "}"}]}], ";"}], "\n", 
+ RowBox[{"ParseCommandLine", "[", 
+  RowBox[{
+   RowBox[{"{", 
+    RowBox[{"posArgSpec", ",", " ", 
+     RowBox[{"{", "}"}]}], "}"}], ",", " ", 
+   RowBox[{"{", "\"\<false\>\"", "}"}]}], "]"}]}], "Input",
+ CellLabel->"In[299]:=",
+ CellID->1437053951,ExpressionUUID->"1c91e5f0-ec5f-4586-bf4c-888129ccb240"],
+
+Cell[BoxData[
+ RowBox[{"{", 
+  RowBox[{
+   RowBox[{"\[LeftAssociation]", 
+    RowBox[{"\<\"arg\"\>", "\[Rule]", "False"}], "\[RightAssociation]"}], ",", 
+   RowBox[{"\[LeftAssociation]", "\[RightAssociation]"}]}], "}"}]], "Output",
+ CellLabel->"Out[300]=",
+ CellID->22243308,ExpressionUUID->"55dbaa20-bb29-4623-8c5f-22f346b626af"]
+}, Open  ]]
+}, Open  ]],
+
+Cell[TextData[{
+ StyleBox["NumericSpec[type, docString]", "Input"],
+ " generates a specification for a number. The value returned by the parser \
+is either a number, ",
+ StyleBox["Infinity", "Input"],
+ " or ",
+ StyleBox["-Infinity", "Input"],
+ " (more precisely, ",
+ StyleBox["DirectedInfinity[1]", "Input"],
+ " and ",
+ StyleBox["DirectedInfinity[-1]", "Input"],
+ " respectively)."
+}], "Text",
+ CellID->1847915871,ExpressionUUID->"fa59e24f-4e54-482c-9776-a2c4bb7cc50f"],
+
+Cell[TextData[{
+ StyleBox["type", "Input"],
+ " is either ",
+ StyleBox["\"Real\"", "Input"],
+ " or ",
+ StyleBox["\"Integer\"", "Input"]
+}], "Item",
+ CellID->998137851,ExpressionUUID->"5f6020ab-54ce-4850-8f05-986befd158eb"],
+
+Cell[TextData[{
+ StyleBox["docString", "Input"],
+ " is the documentation string for the argument"
+}], "Item",
+ CellID->1022547464,ExpressionUUID->"f02b5846-c410-4ed8-8c90-f587fdb4252f"],
+
+Cell[TextData[{
+ "Can set the option ",
+ StyleBox["\"Interval\" -> {a, b}", "Input"],
+ " to specify an allowed interval (endpoints allowed). Can use ",
+ StyleBox["Infinity", "Input"],
+ " for unbounded intervals"
+}], "Item",
+ CellID->812916708,ExpressionUUID->"515e4ac2-0407-4ab3-b2e5-928000a0c953"],
+
+Cell[TextData[{
+ "Can set the option ",
+ StyleBox["\"AllowInfinity\" -> True", "Input"],
+ " to actually allow ",
+ StyleBox["Infinity", "Input"],
+ " or ",
+ StyleBox["-Infinity", "Input"],
+ " as input values (or their lower-cased equivalents). They will be parsed to \
+their equivalent symbolic expressions"
+}], "Item",
+ CellID->1032242184,ExpressionUUID->"60058bb4-bb49-4c64-981b-8f8bf0d317eb"],
+
+Cell[CellGroupData[{
+
+Cell[TextData[{
+ "Can set the option ",
+ StyleBox["\"Variadic\" -> True", "Input"],
+ " to make it variadic (more on this in the following sections)"
+}], "Item",
+ CellID->527818865,ExpressionUUID->"b20f6116-bdda-41cd-bd19-ee79660766cb"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"posArgSpec", "=", 
+   RowBox[{"{", 
+    RowBox[{"\"\<arg\>\"", "->", 
+     RowBox[{"NumericSpec", "[", 
+      RowBox[{
+      "\"\<Real\>\"", ",", 
+       "\"\<A real number no larger than 3. -Infinity (or -infinity) is also \
+accepted\>\"", ",", 
+       RowBox[{"\"\<Interval\>\"", "->", 
+        RowBox[{"{", 
+         RowBox[{
+          RowBox[{"-", "Infinity"}], ",", "3"}], "}"}]}], ",", 
+       RowBox[{"\"\<AllowInfinity\>\"", "->", "True"}]}], "]"}]}], "}"}]}], 
+  ";"}], "\[IndentingNewLine]", 
+ RowBox[{"ParseCommandLine", "[", 
+  RowBox[{
+   RowBox[{"{", 
+    RowBox[{"posArgSpec", ",", " ", 
+     RowBox[{"{", "}"}]}], "}"}], ",", " ", 
+   RowBox[{"{", "\"\<-infinity\>\"", "}"}]}], "]"}]}], "Input",
+ CellLabel->"In[301]:=",
+ CellID->1991268176,ExpressionUUID->"2cedf28f-bf9e-41f9-b462-146f625dc073"],
+
+Cell[BoxData[
+ RowBox[{"{", 
+  RowBox[{
+   RowBox[{"\[LeftAssociation]", 
+    RowBox[{"\<\"arg\"\>", "\[Rule]", 
+     RowBox[{"-", "\[Infinity]"}]}], "\[RightAssociation]"}], ",", 
+   RowBox[{"\[LeftAssociation]", "\[RightAssociation]"}]}], "}"}]], "Output",
+ CellLabel->"Out[302]=",
+ CellID->709125220,ExpressionUUID->"2cbbc9e6-ad1b-4e00-ac50-fa8a3fcbcb3e"]
+}, Open  ]]
+}, Open  ]],
+
+Cell[TextData[{
+ StyleBox["EnumSpec[values, docString]", "Input"],
+ " generates a specification for an argument having values that range on a \
+fixed set of choices. The value returned by the parser is anything appearing \
+in ",
+ StyleBox["values", "Input"],
+ ", and lower-cased names are accepted as command line inputs. Essentially, a \
+",
+ StyleBox["BooleanSpec", "Input"],
+ " is an ",
+ StyleBox["EnumSpec", "Input"],
+ " with allowed values ",
+ Cell[BoxData[
+  ButtonBox["True",
+   BaseStyle->"Link"]], "InlineFormula",ExpressionUUID->
+  "05d79da2-9142-40fa-b253-eaadb2ecac4c"],
+ " and ",
+ Cell[BoxData[
+  ButtonBox["False",
+   BaseStyle->"Link"]], "InlineFormula",ExpressionUUID->
+  "b4f4e136-81d4-4e07-8405-9d027cc26739"],
+ "."
+}], "Text",
+ CellID->1318307401,ExpressionUUID->"a2e820e6-eb85-4dfb-ad44-2667b02280b6"],
+
+Cell[TextData[{
+ StyleBox["values", "Input"],
+ " is the list of desired values. Both symbols and strings can be used"
+}], "Item",
+ CellID->1710290269,ExpressionUUID->"516e850d-f869-4dbb-82a5-00a7062eb186"],
+
+Cell[TextData[{
+ StyleBox["docString", "Input"],
+ " is the documentation string for the argument"
+}], "Item",
+ CellID->440182383,ExpressionUUID->"554ed7a7-517a-4804-8cb8-92a704ec82a3"],
+
+Cell[CellGroupData[{
+
+Cell[TextData[{
+ "Can set the option ",
+ StyleBox["\"Variadic\" -> True", "Input"],
+ " to make it variadic (more on this in the following sections)"
+}], "Item",
+ CellID->1929290497,ExpressionUUID->"e7c14ddd-b965-4f61-aabe-6c13e84ef729"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"posArgSpec", "=", 
+   RowBox[{"{", 
+    RowBox[{"\"\<arg\>\"", "->", 
+     RowBox[{"EnumSpec", "[", 
+      RowBox[{
+       RowBox[{"{", 
+        RowBox[{"\"\<Hello\>\"", ",", "None", ",", "True"}], "}"}], ",", 
+       "\"\<Can be Hello, None, True or their lower-cased equivalents\>\""}], 
+      "]"}]}], "}"}]}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{"ParseCommandLine", "[", 
+  RowBox[{
+   RowBox[{"{", 
+    RowBox[{"posArgSpec", ",", " ", 
+     RowBox[{"{", "}"}]}], "}"}], ",", " ", 
+   RowBox[{"{", "\"\<none\>\"", "}"}]}], "]"}]}], "Input",
+ CellLabel->"In[303]:=",
+ CellID->8195085,ExpressionUUID->"05c71487-2f6a-40e1-a3e3-8e7950a4260b"],
+
+Cell[BoxData[
+ RowBox[{"{", 
+  RowBox[{
+   RowBox[{"\[LeftAssociation]", 
+    RowBox[{"\<\"arg\"\>", "\[Rule]", "None"}], "\[RightAssociation]"}], ",", 
+   
+   RowBox[{"\[LeftAssociation]", "\[RightAssociation]"}]}], "}"}]], "Output",
+ CellLabel->"Out[304]=",
+ CellID->1116364169,ExpressionUUID->"2603a5b3-6a90-4317-b77b-1139ca9e6c28"]
+}, Open  ]]
+}, Open  ]],
+
+Cell[TextData[{
+ StyleBox["RepeatedSpec[singleSpec, separator, docString]", "Input"],
+ " generates a specification for a list of values each specified by ",
+ StyleBox["singleSpec", "Input"],
+ ". Values must be separated using ",
+ StyleBox["separator", "Input"],
+ " with no spaces, and the elements are collected into a list. It is possible \
+to create an empty list by just passing ",
+ StyleBox["separator", "Input"],
+ " as the argument value, or by ",
+ StyleBox["--opt-name=", "Program"],
+ " for optional arguments."
+}], "Text",
+ CellID->885369252,ExpressionUUID->"40236676-310d-4260-831d-9290fbd2d6d5"],
+
+Cell[TextData[{
+ StyleBox["singleSpec", "Input"],
+ " is the specification for the individual elements. It can be an explicit \
+low-level specification or it can be generated by other high-level helpers. \
+Each of the provided elements are parsed individually according to ",
+ StyleBox["singleSpec", "Input"]
+}], "Item",
+ CellID->836822500,ExpressionUUID->"e6e95c5c-6111-495e-abf3-ceecf4060ede"],
+
+Cell[TextData[{
+ StyleBox["separator", "Input"],
+ " is a string of one or more characters used to separate individual values. \
+It cannot be a whitespace"
+}], "Item",
+ CellID->311459957,ExpressionUUID->"15b639f5-524a-4ea7-af22-86a612ed4a65"],
+
+Cell[CellGroupData[{
+
+Cell[TextData[{
+ StyleBox["docString", "Input"],
+ " is the documentation string for the argument. The documentation string of ",
+ StyleBox["singleSpec", "Input"],
+ " is ignored"
+}], "Item",
+ CellID->174939555,ExpressionUUID->"b57b7e7a-cc8f-4a55-8076-056ffe15b2c8"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"posArgSpec", "=", 
+   RowBox[{"{", 
+    RowBox[{"\"\<arg\>\"", "->", 
+     RowBox[{"RepeatedSpec", "[", 
+      RowBox[{
+       RowBox[{"EnumSpec", "[", 
+        RowBox[{
+         RowBox[{"{", 
+          RowBox[{"\"\<Hello\>\"", ",", "None", ",", "True"}], "}"}], ",", 
+         "\"\<\>\""}], "]"}], ",", "\"\<,\>\"", ",", 
+       "\"\<Comma-separated list whose elements are Hello|None|True or their \
+lower-case equivalents\>\""}], "]"}]}], "}"}]}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{"ParseCommandLine", "[", 
+  RowBox[{
+   RowBox[{"{", 
+    RowBox[{"posArgSpec", ",", " ", 
+     RowBox[{"{", "}"}]}], "}"}], ",", " ", 
+   RowBox[{"{", "\"\<hello,true,Hello,None,none,True\>\"", "}"}]}], 
+  "]"}]}], "Input",
+ CellLabel->"In[305]:=",
+ CellID->228242004,ExpressionUUID->"31827e6b-d35b-4579-8efa-134f7da8517e"],
+
+Cell[BoxData[
+ RowBox[{"{", 
+  RowBox[{
+   RowBox[{"\[LeftAssociation]", 
+    RowBox[{"\<\"arg\"\>", "\[Rule]", 
+     RowBox[{"{", 
+      RowBox[{"\<\"Hello\"\>", ",", "True", ",", "\<\"Hello\"\>", ",", "None",
+        ",", "None", ",", "True"}], "}"}]}], "\[RightAssociation]"}], ",", 
+   RowBox[{"\[LeftAssociation]", "\[RightAssociation]"}]}], "}"}]], "Output",
+ CellLabel->"Out[306]=",
+ CellID->615724057,ExpressionUUID->"1a316793-8817-442d-9ed1-aafdd0a14367"]
+}, Open  ]]
+}, Open  ]]
+}, Open  ]]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["Variadic arguments", "Section",
+ CellID->2028928016,ExpressionUUID->"947d2a0d-5b53-4f70-9305-6afdca1d5f37"],
+
+Cell[TextData[{
+ "Variadic argument specifications have True as the 4th element of their \
+low-level specification. This feature fundamentally changes how arguments are \
+treated by the parser. Any number of optional arguments can be variadic but \
+only one positional argument can, and it must appear as the very last element \
+in the specification (after all positional arguments without default and all \
+positional arguments with default). For variadic arguments,  ",
+ StyleBox["ParseCommandLine", "Input"],
+ " always returns a list of the objects produced by their parser."
+}], "Text",
+ CellID->834504704,ExpressionUUID->"060e01a3-69ee-4ddb-90aa-dc1436dcab9e"],
+
+Cell[CellGroupData[{
+
+Cell[TextData[{
+ "A positional variadic argument is passed from the command line as a \
+sequence of values like ",
+ StyleBox["val1 val2 val3", "Program"],
+ ". Optional variadic arguments require the option name to be repeated for \
+every element as in ",
+ StyleBox["--opt-name=val1 --opt-name=val2 --opt-name=val3", "Program"],
+ ". In both cases ",
+ StyleBox["ParseCommandLine", "Input"],
+ " will return the list of objects resulting from mapping the parser on ",
+ StyleBox["{val1, val2, val3}", "Input"],
+ "."
+}], "Text",
+ CellID->2145200365,ExpressionUUID->"4e1b385b-5e95-4aff-8e28-ae2308ad6557"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"posArgSpec", "=", 
+   RowBox[{"{", 
+    RowBox[{"\"\<pos-bool\>\"", "->", 
+     RowBox[{"BooleanSpec", "[", 
+      RowBox[{"\"\<\>\"", ",", 
+       RowBox[{"\"\<Variadic\>\"", "->", "True"}]}], "]"}]}], "}"}]}], 
+  ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"optArgSpec", "=", 
+   RowBox[{"{", 
+    RowBox[{"\"\<opt-bool\>\"", "->", 
+     RowBox[{"BooleanSpec", "[", 
+      RowBox[{"\"\<\>\"", ",", 
+       RowBox[{"\"\<Variadic\>\"", "->", "True"}]}], "]"}]}], "}"}]}], 
+  ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"fullSpec", "=", 
+   RowBox[{"{", 
+    RowBox[{"posArgSpec", ",", "optArgSpec"}], "}"}]}], ";"}]}], "Input",
+ CellLabel->"In[307]:=",
+ CellID->1481142504,ExpressionUUID->"acac090e-2d03-435b-b37f-673b25046f2f"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"ParseCommandLine", "[", 
+  RowBox[{"fullSpec", ",", 
+   RowBox[{"{", 
+    RowBox[{
+    "\"\<false\>\"", ",", "\"\<false\>\"", ",", "\"\<true\>\"", ",", 
+     "\"\<--opt-bool=true\>\"", ",", "\"\<--opt-bool=false\>\""}], "}"}]}], 
+  "]"}]], "Input",
+ CellLabel->"In[310]:=",
+ CellID->1598441356,ExpressionUUID->"9970edbd-cde6-46a0-b9b5-02ac818fdf77"],
+
+Cell[BoxData[
+ RowBox[{"{", 
+  RowBox[{
+   RowBox[{"\[LeftAssociation]", 
+    RowBox[{"\<\"pos-bool\"\>", "\[Rule]", 
+     RowBox[{"{", 
+      RowBox[{"False", ",", "False", ",", "True"}], "}"}]}], 
+    "\[RightAssociation]"}], ",", 
+   RowBox[{"\[LeftAssociation]", 
+    RowBox[{"\<\"opt-bool\"\>", "\[Rule]", 
+     RowBox[{"{", 
+      RowBox[{"True", ",", "False"}], "}"}]}], "\[RightAssociation]"}]}], 
+  "}"}]], "Output",
+ CellLabel->"Out[310]=",
+ CellID->506845502,ExpressionUUID->"6d7dfcbc-1bfa-430e-8024-8d8d26a8030f"]
+}, Open  ]]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["\<\
+In case nothing is passed to either the positional or optional arguments an \
+empty list will be returned:\
+\>", "Text",
+ CellID->502032873,ExpressionUUID->"abbc5789-3132-4c81-93f4-1c36629df023"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"ParseCommandLine", "[", 
+  RowBox[{"fullSpec", ",", " ", 
+   RowBox[{"{", "}"}]}], "]"}]], "Input",
+ CellLabel->"In[311]:=",
+ CellID->414840641,ExpressionUUID->"2fc6d79b-24be-407e-a257-8b11817eb74d"],
+
+Cell[BoxData[
+ RowBox[{"{", 
+  RowBox[{
+   RowBox[{"\[LeftAssociation]", 
+    RowBox[{"\<\"pos-bool\"\>", "\[Rule]", 
+     RowBox[{"{", "}"}]}], "\[RightAssociation]"}], ",", 
+   RowBox[{"\[LeftAssociation]", 
+    RowBox[{"\<\"opt-bool\"\>", "\[Rule]", 
+     RowBox[{"{", "}"}]}], "\[RightAssociation]"}]}], "}"}]], "Output",
+ CellLabel->"Out[311]=",
+ CellID->741665453,ExpressionUUID->"e452fb87-3f4b-4615-9d66-0db7555a35bd"]
+}, Open  ]]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[TextData[{
+ "Thus it follows that variadic arguments cannot have defaults: a \
+specification of the form ",
+ StyleBox["{name, default} -> spec", "Input"],
+ " will be rejected if spec is variadic:"
+}], "Text",
+ CellID->942659506,ExpressionUUID->"57e96940-b664-48cd-b346-8675592bf5ec"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"posArgSpec", "=", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"{", 
+      RowBox[{"\"\<pos-bool\>\"", ",", "False"}], "}"}], "->", 
+     RowBox[{"BooleanSpec", "[", 
+      RowBox[{"\"\<\>\"", ",", 
+       RowBox[{"\"\<Variadic\>\"", "->", "True"}]}], "]"}]}], "}"}]}], 
+  ";"}], "\[IndentingNewLine]", 
+ RowBox[{"ParseCommandLine", "[", 
+  RowBox[{
+   RowBox[{"{", 
+    RowBox[{"posArgSpec", ",", " ", 
+     RowBox[{"{", "}"}]}], "}"}], ",", 
+   RowBox[{"{", "\"\<anything\>\"", "}"}]}], "]"}]}], "Input",
+ CellLabel->"In[312]:=",
+ CellID->109388535,ExpressionUUID->"6a642394-8e47-4b3f-a233-cbd34f0c8e90"],
+
+Cell[BoxData[
+ TemplateBox[{
+  "ParseCommandLine", "badspec", 
+   "\"\\!\\(\\*RowBox[{\\\"\\\\\\\"Positional\\\\\\\"\\\"}]\\) argument \
+specification \\!\\(\\*RowBox[{RowBox[{\\\"{\\\", \
+RowBox[{\\\"\\\\\\\"pos-bool\\\\\\\"\\\", \\\",\\\", \\\"False\\\"}], \\\"}\\\
+\"}], \\\"\[Rule]\\\", RowBox[{\\\"{\\\", \
+RowBox[{RowBox[{\\\"\\\\\\\"true\\\\\\\"\\\", \\\"|\\\", \
+\\\"\\\\\\\"false\\\\\\\"\\\", \\\"|\\\", \\\"\\\\\\\"True\\\\\\\"\\\", \\\"|\
+\\\", \\\"\\\\\\\"False\\\\\\\"\\\"}], \\\",\\\", RowBox[{RowBox[{\\\"Replace\
+\\\", \\\"[\\\", RowBox[{\\\"#1\\\", \\\",\\\", RowBox[{\\\"{\\\", \
+RowBox[{RowBox[{RowBox[{\\\"\\\\\\\"true\\\\\\\"\\\", \\\"|\\\", \
+\\\"\\\\\\\"True\\\\\\\"\\\"}], \\\"\[Rule]\\\", \\\"True\\\"}], \\\",\\\", \
+RowBox[{RowBox[{\\\"\\\\\\\"false\\\\\\\"\\\", \\\"|\\\", \\\"\\\\\\\"False\\\
+\\\\\"\\\"}], \\\"\[Rule]\\\", \\\"False\\\"}]}], \\\"}\\\"}]}], \\\"]\\\"}], \
+\\\"&\\\"}], \\\",\\\", RowBox[{\\\"True\\\", \\\"&\\\"}], \\\",\\\", \
+\\\"True\\\", \\\",\\\", \\\"\\\\\\\"\\\\\\\"\\\"}], \\\"}\\\"}]}]\\) is not \
+valid.\"", 2, 313, 28, 34434383229564482630, "Local", 
+   "Wolfram`CommandLineParser`ParseCommandLine"},
+  "MessageTemplate2"]], "Message", "MSG",
+ CellLabel->"During evaluation of In[312]:=",
+ CellID->2068752813,ExpressionUUID->"65c9f6dd-8e9f-439a-93da-a03cb0cdc358"],
+
+Cell[BoxData["$Aborted"], "Output",
+ CellLabel->"Out[313]=",
+ CellID->1858814321,ExpressionUUID->"87f38f4b-d9c2-49a0-b27b-d44fd80cc3e8"]
+}, Open  ]]
+}, Open  ]],
+
+Cell[TextData[{
+ "Variadic arguments and non-variadic arguments produced by the high-level \
+helper ",
+ StyleBox["RepeatedSpec", "Input"],
+ " are two different ways to parse lists of arguments, each with its own pros \
+and cons. Only one positional argument can be variadic but any number of \
+arguments can by defined by ",
+ StyleBox["RepeatedSpec", "Input"],
+ ", and variadic optional arguments are cumbersome to specify because the \
+argument name has to be repeated for each element. But variadic arguments \
+don't have to rely on a separator character so they are more general (single \
+values to be parsed cannot contain the separator with ",
+ StyleBox["RepeatedSpec", "Input"],
+ ")."
+}], "Text",
+ CellID->619793511,ExpressionUUID->"05a346b6-0157-4dc0-9354-c9df3640ae85"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["Related Guides", "TutorialMoreAboutSection",
+ CellID->1158645833,ExpressionUUID->"f768689c-2cb8-41ef-9c20-948d1317d2a0"],
+
+Cell["XXXX", "TutorialMoreAbout",
+ CellID->1725128418,ExpressionUUID->"8aecda63-2bcc-438d-8ec8-f1496b48fade"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["Related Tech Notes", "RelatedTutorialsSection",
+ CellID->876094728,ExpressionUUID->"fb1bff7a-a2a9-4d6f-8f07-31abe0c986f5"],
+
+Cell["XXXX", "RelatedTutorials",
+ CellID->1975111916,ExpressionUUID->"6a14a334-8974-41dd-ae42-882aae35b534"]
+}, Open  ]]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["Metadata", "MetadataSection",
+ CellID->330549954,ExpressionUUID->"ca044266-1abc-4188-8751-b1c1b2bfedf4"],
+
+Cell[TextData[{
+ "New in: ",
+ Cell["XX", "HistoryData",
+  CellTags->"New",ExpressionUUID->"96fceadf-e39c-4392-b324-56973dda56b7"],
+ " | Modified in: ",
+ Cell[" ", "HistoryData",
+  CellTags->"Modified",ExpressionUUID->"24186657-704e-464f-94ae-b43e45f47cec"],
+ " | Obsolete in: ",
+ Cell[" ", "HistoryData",
+  CellTags->"Obsolete",ExpressionUUID->
+  "6b1fd101-ed6c-4a8d-87ba-5e1cd5c1b75f"]
+}], "History",
+ CellID->997830628,ExpressionUUID->"bce4757d-e7be-4072-b60d-16d846d3dd6b"],
+
+Cell[CellGroupData[{
+
+Cell["Categorization", "CategorizationSection",
+ CellID->854978078,ExpressionUUID->"ca710fc7-e1d1-46f0-b29a-d3458acaf6da"],
+
+Cell["Tech Note", "Categorization",
+ CellLabel->"Entity Type",
+ CellID->1864697725,ExpressionUUID->"dcd6eb08-de71-420a-94c5-3c60df0e3a86"],
+
+Cell["Wolfram/CommandLineParser", "Categorization",
+ CellLabel->"Paclet Name",
+ CellID->227960964,ExpressionUUID->"9f55aaf0-7c14-4c52-9d3c-cc024c1ac326"],
+
+Cell["Wolfram`CommandLineParser`", "Categorization",
+ CellLabel->"Context",
+ CellID->1570932705,ExpressionUUID->"f6e5ee10-65c5-4718-8d84-7c9bf84d73ba"],
+
+Cell["Wolfram/CommandLineParser/tutorial/xxxxx", "Categorization",
+ CellLabel->"URI",
+ CellID->2020672166,ExpressionUUID->"614243d2-2602-4e22-a860-4dfaac5ab642"]
+}, Closed]],
+
+Cell[CellGroupData[{
+
+Cell["Keywords", "KeywordsSection",
+ CellID->77260562,ExpressionUUID->"433940dd-c6bc-4d57-ac0c-d7f387462d61"],
+
+Cell["XXXX", "Keywords",
+ CellID->922719387,ExpressionUUID->"8f0fd204-74ab-4c72-9ce5-f21549d73b83"]
+}, Closed]]
+}, Open  ]]
+},
+WindowSize->{693.75, 762},
+WindowMargins->{{Automatic, 0}, {Automatic, 0}},
+PrivateNotebookOptions->{"FileOutlineCache"->False},
+TaggingRules-><|"Paclet" -> "Wolfram/CommandLineParser"|>,
+TrackCellChangeTimes->False,
+Magnification:>0.75 Inherited,
+FrontEndVersion->"14.1 for Linux x86 (64-bit) (February 29, 2024)",
+StyleDefinitions->FrontEnd`FileName[{"Wolfram"}, "TechNotePageStylesExt.nb", 
+  CharacterEncoding -> "UTF-8"],
+ExpressionUUID->"90b01130-abb2-47d5-af62-c9f640dba0cd"
+]
