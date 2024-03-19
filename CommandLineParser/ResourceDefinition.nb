@@ -35,7 +35,7 @@ Cell["", "FileManagerTopSpacer",
  CellGroupingRules->{"SectionGrouping", 99},
  TaggingRules->{},
  CellTags->{"FileManagerCell", "FileManager-PacletFiles"},
- CellID->1587731928,ExpressionUUID->"eabee0ec-bbbe-4f27-8cb9-18591efb274d"],
+ CellID->1587731928,ExpressionUUID->"f6ff2096-59b8-4677-8596-8a9b7683e308"],
 
 Cell[CellGroupData[{
 
@@ -60,7 +60,7 @@ Cell[TextData[Cell[BoxData[
     NotebookDirectory[], "Documentation"}],
   BoxID -> "FileTreePath",
   BaseStyle->{
-   "Text"}]],ExpressionUUID->"f4443f5a-8181-4c19-a72a-cb1d9d38698f"]], \
+   "Text"}]],ExpressionUUID->"52f4428b-4c40-414e-8dcb-5521b707b326"]], \
 "FileManagerDirectory",
  CellMargins->{{Inherited, Inherited}, {Inherited, Inherited}},
  CellGroupingRules->{"SectionGrouping", 100},
@@ -71,7 +71,7 @@ Cell[TextData[Cell[BoxData[
       TemplateBox[{}, "FileManagerDocumentationIconTemplate"]], Background -> 
      None], Inherited}, {Inherited, Inherited}},
  CellTags->{"FileManagerCell", "FileManager-PacletFiles"},
- CellID->1919239227,ExpressionUUID->"ce08251a-469c-4c36-a56e-4978a6188f38"],
+ CellID->1919239227,ExpressionUUID->"011f3815-b2a1-4ead-930c-80bcb4ad8567"],
 
 Cell[CellGroupData[{
 
@@ -96,7 +96,7 @@ Cell[TextData[Cell[BoxData[
     NotebookDirectory[], "Documentation", "English"}],
   BoxID -> "FileTreePath",
   BaseStyle->{
-   "Text"}]],ExpressionUUID->"96897120-ec34-4d7a-b42a-00ee4f580a15"]], \
+   "Text"}]],ExpressionUUID->"9d857c24-75ba-49f1-b29d-d0265f8afde1"]], \
 "FileManagerDirectory",
  CellMargins->{{23 + Inherited, Inherited}, {Inherited, Inherited}},
  CellGroupingRules->{"SectionGrouping", 110},
@@ -107,7 +107,7 @@ Cell[TextData[Cell[BoxData[
       TemplateBox[{}, "FileManagerDirectoryIconTemplate"]], Background -> 
      None], Inherited}, {Inherited, Inherited}},
  CellTags->{"FileManagerCell", "FileManager-PacletFiles"},
- CellID->1471290794,ExpressionUUID->"aa27cb95-2052-4f52-8966-e4bd32c1e007"],
+ CellID->1471290794,ExpressionUUID->"ca4c8e6c-b6ac-4880-8b5e-0ebb31ac95f0"],
 
 Cell[TextData[Cell[BoxData[
  InterpretationBox[
@@ -130,7 +130,7 @@ Cell[TextData[Cell[BoxData[
     NotebookDirectory[], "Documentation", "English", "Guides"}],
   BoxID -> "FileTreePath",
   BaseStyle->{
-   "Text"}]],ExpressionUUID->"4c119dd2-f020-4d2b-8d6a-4646deda6825"]], \
+   "Text"}]],ExpressionUUID->"b140a87e-3d82-4eb8-b300-7eb3e4422ee9"]], \
 "FileManagerDirectory",
  CellMargins->{{46 + Inherited, Inherited}, {Inherited, Inherited}},
  CellGroupingRules->{"SectionGrouping", 120},
@@ -141,7 +141,7 @@ Cell[TextData[Cell[BoxData[
       TemplateBox[{}, "FileManagerEmptyDirectoryIconTemplate"]], Background -> 
      None], Inherited}, {Inherited, Inherited}},
  CellTags->{"FileManagerCell", "FileManager-PacletFiles"},
- CellID->1460076321,ExpressionUUID->"c5f54b06-31c9-43ec-ac9f-d15aee8b5c57"],
+ CellID->1460076321,ExpressionUUID->"7786adf3-4a6d-448c-b6e1-6a788444c99c"],
 
 Cell[TextData[Cell[BoxData[
  InterpretationBox[
@@ -164,7 +164,7 @@ Cell[TextData[Cell[BoxData[
     NotebookDirectory[], "Documentation", "English", "ReferencePages"}],
   BoxID -> "FileTreePath",
   BaseStyle->{
-   "Text"}]],ExpressionUUID->"c984daed-9782-40ea-850e-36e43d53bd00"]], \
+   "Text"}]],ExpressionUUID->"8118ebdf-2831-446b-9260-285a59621e18"]], \
 "FileManagerDirectory",
  CellMargins->{{46 + Inherited, Inherited}, {Inherited, Inherited}},
  CellGroupingRules->{"SectionGrouping", 120},
@@ -175,7 +175,7 @@ Cell[TextData[Cell[BoxData[
       TemplateBox[{}, "FileManagerEmptyDirectoryIconTemplate"]], Background -> 
      None], Inherited}, {Inherited, Inherited}},
  CellTags->{"FileManagerCell", "FileManager-PacletFiles"},
- CellID->819801992,ExpressionUUID->"97508ad0-a321-49c5-a074-fbea867f166d"],
+ CellID->819801992,ExpressionUUID->"c6b755bd-7337-42b2-914d-96b268c2e9d7"],
 
 Cell[CellGroupData[{
 
@@ -200,7 +200,7 @@ Cell[TextData[Cell[BoxData[
     NotebookDirectory[], "Documentation", "English", "Tutorials"}],
   BoxID -> "FileTreePath",
   BaseStyle->{
-   "Text"}]],ExpressionUUID->"6c5aee77-1a0c-4401-92fb-4d9115f91431"]], \
+   "Text"}]],ExpressionUUID->"50f7f39f-7a02-430f-aa05-8b982ca91c96"]], \
 "FileManagerDirectory",
  CellMargins->{{46 + Inherited, Inherited}, {Inherited, Inherited}},
  CellGroupingRules->{"SectionGrouping", 120},
@@ -211,7 +211,7 @@ Cell[TextData[Cell[BoxData[
       TemplateBox[{}, "FileManagerDirectoryIconTemplate"]], Background -> 
      None], Inherited}, {Inherited, Inherited}},
  CellTags->{"FileManagerCell", "FileManager-PacletFiles"},
- CellID->738638956,ExpressionUUID->"fc13e9e0-8302-4871-bcd6-6144f1b510db"],
+ CellID->738638956,ExpressionUUID->"b7f77830-6800-4dee-b681-3951b5ab8ae3"],
 
 Cell[BoxData[
  InterpretationBox[
@@ -237,7 +237,7 @@ Cell[BoxData[
       TemplateBox[{}, "FileManagerNBIconTemplate"]], Background -> None], 
     Inherited}, {Inherited, Inherited}},
  CellTags->{"FileManagerCell", "FileManager-PacletFiles"},
- CellID->612749736,ExpressionUUID->"fcd70499-5309-4b51-b3de-cb8d53921b31"]
+ CellID->612749736,ExpressionUUID->"90fd6217-56b9-4704-8b70-daf437ca4990"]
 }, Closed]]
 }, Closed]]
 }, Closed]],
@@ -265,7 +265,7 @@ Cell[TextData[Cell[BoxData[
     NotebookDirectory[], "Kernel"}],
   BoxID -> "FileTreePath",
   BaseStyle->{
-   "Text"}]],ExpressionUUID->"773c73b8-8aea-4f3b-b529-136080dd14b5"]], \
+   "Text"}]],ExpressionUUID->"39505d66-74c2-428f-af6d-86184230a811"]], \
 "FileManagerDirectory",
  CellMargins->{{Inherited, Inherited}, {Inherited, Inherited}},
  CellGroupingRules->{"SectionGrouping", 100},
@@ -276,7 +276,7 @@ Cell[TextData[Cell[BoxData[
       TemplateBox[{}, "FileManagerKernelIconTemplate"]], Background -> None], 
     Inherited}, {Inherited, Inherited}},
  CellTags->{"FileManagerCell", "FileManager-PacletFiles"},
- CellID->298108112,ExpressionUUID->"09aa1b52-1890-427b-a336-ce2c10a8695c"],
+ CellID->298108112,ExpressionUUID->"b80466d6-865a-43f7-a91c-f57291081530"],
 
 Cell[BoxData[
  InterpretationBox[
@@ -300,7 +300,7 @@ Cell[BoxData[
       TemplateBox[{}, "FileManagerWLIconTemplate"]], Background -> None], 
     Inherited}, {Inherited, Inherited}},
  CellTags->{"FileManagerCell", "FileManager-PacletFiles"},
- CellID->1629155599,ExpressionUUID->"76f43016-aa11-427f-9c19-c43952d9c87f"]
+ CellID->1629155599,ExpressionUUID->"f323249d-df3c-40c3-aa19-e869f63e918e"]
 }, Closed]],
 
 Cell[BoxData[
@@ -325,7 +325,7 @@ Cell[BoxData[
       TemplateBox[{}, "FileManagerPacletInfoIconTemplate"]], Background -> 
      None], Inherited}, {Inherited, Inherited}},
  CellTags->{"FileManagerCell", "FileManager-PacletFiles"},
- CellID->1029807531,ExpressionUUID->"203d3e67-6c3f-4ace-b8d0-45c4cd5f3b20"],
+ CellID->1029807531,ExpressionUUID->"2d3d5424-fd9b-44b8-ab87-0a1284515401"],
 
 Cell[BoxData[
  InterpretationBox[
@@ -349,13 +349,13 @@ Cell[BoxData[
       TemplateBox[{}, "FileManagerNBIconTemplate"]], Background -> None], 
     Inherited}, {Inherited, Inherited}},
  CellTags->{"FileManagerCell", "FileManager-PacletFiles"},
- CellID->424055360,ExpressionUUID->"9f0889bf-bcfd-4cdd-a344-8189d9e74238"],
+ CellID->424055360,ExpressionUUID->"38f59d89-8d27-48ce-8600-3fb80d1130eb"],
 
 Cell["", "FileManagerBottomSpacer",
  CellGroupingRules->{"SectionGrouping", 100},
  TaggingRules->{},
  CellTags->{"FileManagerCell", "FileManager-PacletFiles"},
- CellID->1396261057,ExpressionUUID->"47eb2a90-fda2-46b9-bd34-df7b7e60f3c0"]
+ CellID->1396261057,ExpressionUUID->"078d24e4-3dd0-4ff6-b969-3091a099bc6f"]
 }, Open  ]]
 }, Open  ]],
 
@@ -877,371 +877,18 @@ Cell[BoxData["$Aborted"], "Output",
  CellID->1537929049,ExpressionUUID->"8ebdb265-e276-4183-8fc0-6ef97b61942e"]
 }, Open  ]],
 
-Cell["The script equivalent to the above example is:", "Text",
- TaggingRules->{},
- CellID->602645912,ExpressionUUID->"e7adf48f-2e71-43a9-8a5b-83f956587d52"],
-
-Cell["\<\
-(* script.m *)
-Get[]
-argsSpec = {{\"my-int-arg\" -> NumericSpec[\"Integer\", \"An unbounded \
-integer\"]}, {}};
-parsed = ParseCommandLine[argsSpec];
-Print[parsed]\
-\>", "Program",
- TaggingRules->{},
- CellID->1694410004,ExpressionUUID->"05fd5afc-f1d4-4634-9dec-d9434ecd3eb9"],
-
-Cell["The script is called e.g. in this way:", "Text",
- TaggingRules->{},
- CellID->1999037369,ExpressionUUID->"f5469cfb-ceb1-4fcc-a018-c60390476f71"],
-
-Cell["\<\
-$ math -script script.m 42
-{\[LeftAssociation]\"my-int-arg\" \[Rule] 42\[RightAssociation], \
-\[LeftAssociation]\[RightAssociation]}\
-\>", "Program",
- TaggingRules->{},
- CellID->1472861178,ExpressionUUID->"cc963e34-057b-49df-ac2b-6bcca8dc7d53"]
-}, Open  ]],
-
-Cell[CellGroupData[{
-
-Cell["Scope", "Subsection",
- TaggingRules->{},
- CellID->964056545,ExpressionUUID->"bc24af3a-c8a0-45e8-bbd2-7f9f4fd3ee28"],
-
-Cell["\<\
-Specify a command line interface with three positional arguments (the last \
-being variadic) and two optional arguments:\
-\>", "Text",
- TaggingRules->{},
- CellTags->"DefaultContent",
- CellID->217390316,ExpressionUUID->"fc14b258-181d-4ad3-a3c3-56e382b4e03b"],
-
-Cell[BoxData[
- RowBox[{
-  RowBox[{"posArgSpec", "=", 
-   RowBox[{"{", "\[IndentingNewLine]", 
-    RowBox[{
-     RowBox[{"\"\<my-string-arg\>\"", "->", 
-      RowBox[{"StringSpec", "[", "\"\<A generic string argument\>\"", "]"}]}],
-      ",", "\[IndentingNewLine]", 
-     RowBox[{"\"\<my-symbol-arg\>\"", "->", 
-      RowBox[{"EnumSpec", "[", 
-       RowBox[{
-        RowBox[{"{", 
-         RowBox[{"None", ",", "Automatic", ",", "Inherited"}], "}"}], ",", 
-        "\"\<A special symbol. Can be None, Automatic, Inherited or their \
-lower-case equivalents\>\""}], "]"}]}], ",", 
-     RowBox[{"\"\<my-variadic-numeric-arg\>\"", "->", 
-      RowBox[{"NumericSpec", "[", 
-       RowBox[{
-       "\"\<Integer\>\"", ",", 
-        "\"\<Any sequence of positive integers, including none\>\"", ",", 
-        RowBox[{"\"\<Interval\>\"", "->", 
-         RowBox[{"{", 
-          RowBox[{"0", ",", "Infinity"}], "}"}]}], ",", 
-        RowBox[{"\"\<Variadic\>\"", "->", "True"}]}], "]"}]}]}], 
-    "\[IndentingNewLine]", "}"}]}], ";"}]], "Input",
- TaggingRules->{},
- CellLabel->"In[21]:=",
- CellID->455670901,ExpressionUUID->"d2d11292-2247-469a-a505-2910ea7c6f5d"],
-
-Cell[BoxData[
- RowBox[{
-  RowBox[{"optArgSpec", "=", 
-   RowBox[{"{", "\[IndentingNewLine]", 
-    RowBox[{
-     RowBox[{
-      RowBox[{"{", 
-       RowBox[{"\"\<my-numeric-opt\>\"", ",", "\"\<0.5\>\""}], "}"}], "->", 
-      RowBox[{"NumericSpec", "[", 
-       RowBox[{
-       "\"\<Real\>\"", ",", "\"\<A real number between 0 and 1\>\"", ",", 
-        RowBox[{"\"\<Interval\>\"", "->", 
-         RowBox[{"{", 
-          RowBox[{"0", ",", "1"}], "}"}]}]}], "]"}]}], ",", 
-     "\[IndentingNewLine]", 
-     RowBox[{
-      RowBox[{"{", 
-       RowBox[{"\"\<my-boolean-opt\>\"", ",", "\"\<false\>\""}], "}"}], "->", 
-      
-      RowBox[{"BooleanSpec", "[", "\"\<A boolean\>\"", "]"}]}]}], 
-    "\[IndentingNewLine]", "}"}]}], ";"}]], "Input",
- TaggingRules->{},
- CellLabel->"In[22]:=",
- CellID->1349202242,ExpressionUUID->"306591a1-43c1-4b2f-baf5-32e34c3a7c3a"],
-
-Cell[BoxData[
- RowBox[{
-  RowBox[{"argsSpec", "=", 
-   RowBox[{"{", 
-    RowBox[{"posArgSpec", ",", "optArgSpec"}], "}"}]}], ";"}]], "Input",
- TaggingRules->{},
- CellLabel->"In[24]:=",
- CellID->130954180,ExpressionUUID->"4b441fd7-bffe-43fe-985f-6633a5592b91"],
-
-Cell["Parse various inputs:", "Text",
- TaggingRules->{},
- CellTags->"DefaultContent",
- CellID->238035243,ExpressionUUID->"5cad9c65-f950-48af-9ad5-d952a6e66ff1"],
-
-Cell[CellGroupData[{
-
-Cell[BoxData[
- RowBox[{"ParseCommandLine", "[", 
-  RowBox[{"argsSpec", ",", 
-   RowBox[{"{", 
-    RowBox[{
-    "\"\<hello\>\"", ",", "\"\<inherited\>\"", ",", "\"\<3\>\"", ",", 
-     "\"\<5\>\"", ",", "\"\<67\>\"", ",", "\"\<1\>\""}], "}"}]}], 
-  "]"}]], "Input",
- TaggingRules->{},
- CellLabel->"In[25]:=",
- CellID->555456698,ExpressionUUID->"0d5cf55d-f778-443f-a1bc-ab7c2169cfd2"],
-
-Cell[BoxData[
- RowBox[{"{", 
-  RowBox[{
-   RowBox[{"\[LeftAssociation]", 
-    RowBox[{
-     RowBox[{"\<\"my-string-arg\"\>", "\[Rule]", "\<\"hello\"\>"}], ",", 
-     RowBox[{"\<\"my-symbol-arg\"\>", "\[Rule]", "Inherited"}], ",", 
-     RowBox[{"\<\"my-variadic-numeric-arg\"\>", "\[Rule]", 
-      RowBox[{"{", 
-       RowBox[{"3", ",", "5", ",", "67", ",", "1"}], "}"}]}]}], 
-    "\[RightAssociation]"}], ",", 
-   RowBox[{"\[LeftAssociation]", 
-    RowBox[{
-     RowBox[{"\<\"my-numeric-opt\"\>", "\[Rule]", "0.5`"}], ",", 
-     RowBox[{"\<\"my-boolean-opt\"\>", "\[Rule]", "False"}]}], 
-    "\[RightAssociation]"}]}], "}"}]], "Output",
- TaggingRules->{},
- CellLabel->"Out[25]=",
- CellID->74089626,ExpressionUUID->"ff752a3c-cd64-4c05-8d57-5d03a19e92a7"]
-}, Open  ]],
-
-Cell[CellGroupData[{
-
-Cell[BoxData[
- RowBox[{"ParseCommandLine", "[", 
-  RowBox[{"argsSpec", ",", 
-   RowBox[{"{", 
-    RowBox[{
-    "\"\<hello\>\"", ",", "\"\<inherited\>\"", ",", "\"\<3\>\"", ",", 
-     "\"\<5\>\"", ",", "\"\<67\>\"", ",", "\"\<1\>\"", ",", 
-     "\"\<--my-numeric-opt=0.2\>\""}], "}"}]}], "]"}]], "Input",
- TaggingRules->{},
- CellLabel->"In[26]:=",
- CellID->1180427490,ExpressionUUID->"434a1895-bb9d-4262-9f08-be6c3edc1fcd"],
-
-Cell[BoxData[
- RowBox[{"{", 
-  RowBox[{
-   RowBox[{"\[LeftAssociation]", 
-    RowBox[{
-     RowBox[{"\<\"my-string-arg\"\>", "\[Rule]", "\<\"hello\"\>"}], ",", 
-     RowBox[{"\<\"my-symbol-arg\"\>", "\[Rule]", "Inherited"}], ",", 
-     RowBox[{"\<\"my-variadic-numeric-arg\"\>", "\[Rule]", 
-      RowBox[{"{", 
-       RowBox[{"3", ",", "5", ",", "67", ",", "1"}], "}"}]}]}], 
-    "\[RightAssociation]"}], ",", 
-   RowBox[{"\[LeftAssociation]", 
-    RowBox[{
-     RowBox[{"\<\"my-numeric-opt\"\>", "\[Rule]", "0.2`"}], ",", 
-     RowBox[{"\<\"my-boolean-opt\"\>", "\[Rule]", "False"}]}], 
-    "\[RightAssociation]"}]}], "}"}]], "Output",
- TaggingRules->{},
- CellLabel->"Out[26]=",
- CellID->626480179,ExpressionUUID->"2f11c589-a6da-4f89-ab57-26ee92e34b71"]
-}, Open  ]],
-
-Cell[CellGroupData[{
-
-Cell[BoxData[
- RowBox[{"ParseCommandLine", "[", 
-  RowBox[{"argsSpec", ",", 
-   RowBox[{"{", 
-    RowBox[{
-    "\"\<hello\>\"", ",", "\"\<inherited\>\"", ",", "\"\<3\>\"", ",", 
-     "\"\<5\>\"", ",", "\"\<67\>\"", ",", "\"\<1\>\"", ",", 
-     "\"\<--my-numeric-opt=0.2\>\"", ",", "\"\<--my-boolean-opt=true\>\""}], 
-    "}"}]}], "]"}]], "Input",
- TaggingRules->{},
- CellLabel->"In[27]:=",
- CellID->1411434712,ExpressionUUID->"49152d8b-f5d0-4585-a631-10031325f0fb"],
-
-Cell[BoxData[
- RowBox[{"{", 
-  RowBox[{
-   RowBox[{"\[LeftAssociation]", 
-    RowBox[{
-     RowBox[{"\<\"my-string-arg\"\>", "\[Rule]", "\<\"hello\"\>"}], ",", 
-     RowBox[{"\<\"my-symbol-arg\"\>", "\[Rule]", "Inherited"}], ",", 
-     RowBox[{"\<\"my-variadic-numeric-arg\"\>", "\[Rule]", 
-      RowBox[{"{", 
-       RowBox[{"3", ",", "5", ",", "67", ",", "1"}], "}"}]}]}], 
-    "\[RightAssociation]"}], ",", 
-   RowBox[{"\[LeftAssociation]", 
-    RowBox[{
-     RowBox[{"\<\"my-numeric-opt\"\>", "\[Rule]", "0.2`"}], ",", 
-     RowBox[{"\<\"my-boolean-opt\"\>", "\[Rule]", "True"}]}], 
-    "\[RightAssociation]"}]}], "}"}]], "Output",
- TaggingRules->{},
- CellLabel->"Out[27]=",
- CellID->191589676,ExpressionUUID->"9e436fc2-986c-4457-b4fd-390595835382"]
-}, Open  ]],
-
-Cell[CellGroupData[{
-
-Cell[BoxData[
- RowBox[{"ParseCommandLine", "[", 
-  RowBox[{"argsSpec", ",", 
-   RowBox[{"{", 
-    RowBox[{
-    "\"\<hello\>\"", ",", "\"\<inherited\>\"", ",", "\"\<3\>\"", ",", 
-     "\"\<5\>\"", ",", "\"\<67\>\"", ",", "\"\<1\>\"", ",", 
-     "\"\<--my-numeric-opt=0.2\>\"", ",", "\"\<--my-boolean-opt\>\""}], 
-    "}"}]}], "]"}]], "Input",
- TaggingRules->{},
- CellLabel->"In[28]:=",
- CellID->204124949,ExpressionUUID->"86860558-2889-4bf4-a299-4d93b834a3dc"],
-
-Cell[BoxData[
- RowBox[{"{", 
-  RowBox[{
-   RowBox[{"\[LeftAssociation]", 
-    RowBox[{
-     RowBox[{"\<\"my-string-arg\"\>", "\[Rule]", "\<\"hello\"\>"}], ",", 
-     RowBox[{"\<\"my-symbol-arg\"\>", "\[Rule]", "Inherited"}], ",", 
-     RowBox[{"\<\"my-variadic-numeric-arg\"\>", "\[Rule]", 
-      RowBox[{"{", 
-       RowBox[{"3", ",", "5", ",", "67", ",", "1"}], "}"}]}]}], 
-    "\[RightAssociation]"}], ",", 
-   RowBox[{"\[LeftAssociation]", 
-    RowBox[{
-     RowBox[{"\<\"my-numeric-opt\"\>", "\[Rule]", "0.2`"}], ",", 
-     RowBox[{"\<\"my-boolean-opt\"\>", "\[Rule]", "True"}]}], 
-    "\[RightAssociation]"}]}], "}"}]], "Output",
- TaggingRules->{},
- CellLabel->"Out[28]=",
- CellID->140045792,ExpressionUUID->"302ea008-7dd2-4ce8-81cb-b410910e24c3"]
-}, Open  ]],
-
-Cell["\<\
-If the special flag -- help is passed, an auto-generated help message is \
-printed :\
-\>", "Text",
- TaggingRules->{},
- CellID->19217944,ExpressionUUID->"af086a66-5014-44d7-8a84-79edec67aa35"],
-
-Cell[CellGroupData[{
-
-Cell[BoxData[
- RowBox[{"ParseCommandLine", "[", 
-  RowBox[{"argsSpec", ",", 
-   RowBox[{"{", "\"\<--help\>\"", "}"}]}], "]"}]], "Input",
- TaggingRules->{},
- CellLabel->"In[30]:=",
- CellID->534674903,ExpressionUUID->"3dff780f-f6f5-40ac-8f06-1fb321bc58d8"],
-
-Cell[CellGroupData[{
-
-Cell[BoxData["\<\"\"\>"], "Print",
- TaggingRules->{},
- CellLabel->"During evaluation of In[30]:=",
- CellID->844316910,ExpressionUUID->"9f6da556-1c28-4f6d-92fa-554addc960b6"],
-
-Cell[BoxData["\<\"* Mandatory positional arguments:\"\>"], "Print",
- TaggingRules->{},
- CellLabel->"During evaluation of In[30]:=",
- CellID->1308504321,ExpressionUUID->"59232049-18ec-4e16-ab9d-f562ed2aae3d"],
-
-Cell[BoxData["\<\"NAME             DOCUMENTATION\"\>"], "Print",
- TaggingRules->{},
- CellLabel->"During evaluation of In[30]:=",
- CellID->1609605899,ExpressionUUID->"75fcb686-b781-4dde-a88f-a80de6f591be"],
-
-Cell[BoxData["\<\"my-string-arg    A generic string argument\"\>"], "Print",
- TaggingRules->{},
- CellLabel->"During evaluation of In[30]:=",
- CellID->231813203,ExpressionUUID->"c0335d2e-f5aa-4de2-badb-25147c8ae68e"],
-
-Cell[BoxData["\<\"my-symbol-arg    A special symbol. Can be None, Automatic, \
-Inherited or their lower-case equivalents\"\>"], "Print",
- TaggingRules->{},
- CellLabel->"During evaluation of In[30]:=",
- CellID->1439458501,ExpressionUUID->"d4d734d7-04e1-4ab0-b6f0-88383c5b72e9"],
-
-Cell[BoxData["\<\"\"\>"], "Print",
- TaggingRules->{},
- CellLabel->"During evaluation of In[30]:=",
- CellID->1683695525,ExpressionUUID->"b552cdc9-f9d9-400c-ad2d-db1cd9967d6e"],
-
-Cell[BoxData["\<\"* Optional positional arguments (must be passed in this \
-order after the mandatory arguments):\"\>"], "Print",
- TaggingRules->{},
- CellLabel->"During evaluation of In[30]:=",
- CellID->1412240693,ExpressionUUID->"dc3a346b-4571-4e91-8c44-04bae010b0df"],
-
-Cell[BoxData["\<\"NAME                       DEFAULT    DOCUMENTATION\"\>"], \
-"Print",
- TaggingRules->{},
- CellLabel->"During evaluation of In[30]:=",
- CellID->2065938680,ExpressionUUID->"ef44ed1d-3a50-46ef-9fc1-a647c1495d09"],
-
-Cell[BoxData["\<\"my-variadic-numeric-arg    {}         Any sequence of \
-positive integers, including none\"\>"], "Print",
- TaggingRules->{},
- CellLabel->"During evaluation of In[30]:=",
- CellID->947646589,ExpressionUUID->"0bc11fa8-46d1-4226-90c8-4e2e5baffedf"],
-
-Cell[BoxData["\<\"\"\>"], "Print",
- TaggingRules->{},
- CellLabel->"During evaluation of In[30]:=",
- CellID->1603830369,ExpressionUUID->"7d5d1bf7-c510-45d7-962a-598aa54a088f"],
-
-Cell[BoxData["\<\"Argument my-variadic-numeric-arg is variadic.\"\>"], "Print",
- TaggingRules->{},
- CellLabel->"During evaluation of In[30]:=",
- CellID->122579982,ExpressionUUID->"4ebd4080-3045-4e7a-9299-0c5f550e41d4"],
-
-Cell[BoxData["\<\"\"\>"], "Print",
- TaggingRules->{},
- CellLabel->"During evaluation of In[30]:=",
- CellID->1087692381,ExpressionUUID->"2cea9b22-8d12-4862-bd29-7452db8a0c6f"],
-
-Cell[BoxData["\<\"* Optional arguments (must be passed as --name=... in any \
-order):\"\>"], "Print",
- TaggingRules->{},
- CellLabel->"During evaluation of In[30]:=",
- CellID->1623048314,ExpressionUUID->"c206cf5f-4515-44f4-8167-def71f78fb24"],
-
-Cell[BoxData["\<\"NAME              DEFAULT    DOCUMENTATION\"\>"], "Print",
- TaggingRules->{},
- CellLabel->"During evaluation of In[30]:=",
- CellID->657254885,ExpressionUUID->"b8dd0386-08c5-4662-b22c-2f5255420680"],
-
-Cell[BoxData["\<\"my-numeric-opt    0.5        A real number between 0 and \
-1\"\>"], "Print",
- TaggingRules->{},
- CellLabel->"During evaluation of In[30]:=",
- CellID->78085153,ExpressionUUID->"129675e5-77ab-4e45-ab6d-ca3bde25f8c1"],
-
-Cell[BoxData["\<\"my-boolean-opt    false      A boolean\"\>"], "Print",
- TaggingRules->{},
- CellLabel->"During evaluation of In[30]:=",
- CellID->349760689,ExpressionUUID->"99a9e660-ac09-403b-92a7-b4951a95db80"]
-}, Open  ]],
-
-Cell[BoxData["$Aborted"], "Output",
- TaggingRules->{},
- CellLabel->"Out[30]=",
- CellID->909143866,ExpressionUUID->"cfee0e9b-4679-4b48-a9c8-911d9a7cc8de"]
-}, Open  ]],
-
-Cell["See the Tech Notes for the full documentation", "Text",
+Cell[TextData[{
+ "See the ",
+ ButtonBox["Tech Notes",
+  BaseStyle->"Hyperlink",
+  ButtonData->{
+    URL["https://resources.wolframcloud.com/PacletRepository/resources/\
+Wolfram/CommandLineParser/tutorial/xxxxx.html"], None},
+  ButtonNote->
+   "https://resources.wolframcloud.com/PacletRepository/resources/Wolfram/\
+CommandLineParser/tutorial/xxxxx.html"],
+ " for the full documentation"
+}], "Text",
  TaggingRules->{},
  CellID->1443922537,ExpressionUUID->"5f3b7aba-decc-4bb7-a2b6-86af7ae73d44"]
 }, Open  ]]
@@ -2663,8 +2310,8 @@ connection\n\[FilledSmallSquare] Send emails", "MoreInfoText"], Background ->
                    GrayLevel[0.95], FrameMargins -> 20, FrameStyle -> 
                    GrayLevel[0.9], RoundingRadius -> 5, ImageSize -> {
                     Scaled[0.65], Automatic}]], "MoreInfoText", Deletable -> 
-                 True, CellTags -> {
-                  "SectionMoreInfoDisclosuresExternalServices"}, 
+                 True, 
+                 CellTags -> {"SectionMoreInfoDisclosuresExternalServices"}, 
                  CellMargins -> {{66, 66}, {15, 15}}], 
                 HoldComplete[
                  EvaluationCell[]], "Click for more information"}, 
@@ -3255,7 +2902,7 @@ Cell["Additional information about limitations, issues, etc.", "Text",
 }, Open  ]]
 }, Open  ]]
 },
-WindowSize->{1387.5, 762},
+WindowSize->{693.75, 762},
 WindowMargins->{{0, Automatic}, {Automatic, 0}},
 WindowTitle->"CommandLineParser | Definition Notebook",
 DockedCells->{
@@ -3319,16 +2966,20 @@ Fu6DuJJG2H9mK2QZ3X1Y8rjKVdsLU11Qbnfn/Mae/TiO1RZHs2bny+6Vwq5Sfi8TnHKi+1+K4NOh"]\
   "PacletBuildData" -> {
    "LastBuiltArchive" -> 
     "/home/matteo/Git/commandlineparser/CommandLineParser/build/Wolfram__\
-CommandLineParser-1.0.0.paclet", "FileHashes" -> 
-    ByteArray[{56, 67, 58, 120, 156, 115, 100, 214, 13, 150, 242, 78, 45, 202,
-       75, 205, 209, 119, 206, 207, 205, 77, 204, 75, 241, 201, 204, 75, 13, 
-      72, 44, 42, 78, 45, 210, 203, 117, 100, 210, 13, 102, 11, 206, 47, 45, 
-      74, 78, 245, 97, 180, 80, 155, 16, 206, 119, 57, 8, 40, 18, 146, 88, 
-      148, 158, 90, 130, 36, 194, 27, 144, 152, 156, 147, 90, 226, 153, 151, 
-      150, 175, 87, 158, 131, 164, 171, 152, 197, 47, 63, 47, 21, 161, 229, 
-      83, 215, 186, 183, 71, 165, 156, 124, 116, 131, 5, 33, 90, 124, 19, 243,
-       50, 211, 82, 139, 75, 240, 107, 211, 48, 208, 115, 157, 243, 237, 189, 
-      29, 0, 6, 95, 60, 38}]}},
+CommandLineParser-1.0.1.paclet", "FileHashes" -> ByteArray[CompressedData["
+1:eJwB5wEY/iFib1JiAQAAANoBAAA4Qzp4nHMU1A1WcslPLs1NzStJLMnMz9N3
+zUvPySzO0PfMS0mt0I830EtOK3Zk0g1mC84vLUpOLWbxy89LBXJDEovSU0t8
+Fv7acv/4lZUKusFq+MwpTk0HSRXHG+Mx60xMzqw/Vw4BRTSIMUsvPTUPj2lv
+NeoEdJ8+MdcN1sJuWnBqYlFyBsRMU4hPU/GYp+DY3rBt9R8HUszDF3Jcs9WC
+78z9B3SfJpHmFWfiMa5Qd8tm3cTbwbrBusQYl5aZmpNSrFeeg8dIi2T5OLYP
+jxx1g02IMTITRPumliSmJJYk4jd5ccs/Q4Nl7CK6wXrEmAxPPUZ4zDT/6VxU
+9tQmg0gzy4syS1L1cvKTs/GYedF60pMLfu2susHqOMwsSM3JgWYVYwIRvuit
+tlJS9v963WBtgobBfWyJx8AP6yQP8XmWJeCOckwDCWSae4uWrFDaXGCtG+yI
+3ciQ0pL8oszEnGJ95/zc3MS8FJ/MvNSAxKLi1CIUDXp5SUjW+BTrVlV/2xJq
+iBS0cz3XSKqne+gGS3mnFuWl5mAaqJeLbASjhdqEcL7LQQgjECK8AYnJOakl
+nnlp+fgTnpvzyyeGMS+ddIMFIVp8E/My01KLS/Br61iq9Pq1+TouAJtI4IHW
+8/F8
+      "]]}},
 CreateCellID->True,
 DynamicEvaluationTimeout->60,
 TrackCellChangeTimes->False,
@@ -4644,6 +4295,7 @@ h/Fh4QMzDxZ+6PEFAOibv7E=
                    FaceForm[{
                     RGBColor[0.31373, 0.4549, 0.61176], 
                     Opacity[1.]}], 
+                   
                    FilledCurveBox[{{{0, 2, 0}, {0, 1, 0}, {0, 1, 0}, {0, 1, 
                     0}}}, {{{182.78, 198.67}, {182.78, 123.95}, {118.06, 
                     86.587}, {118.06, 161.31}, {182.78, 198.67}}}]}, {

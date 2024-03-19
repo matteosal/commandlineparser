@@ -12,7 +12,7 @@ Cell["Introduction", "Section",
 Cell[CellGroupData[{
 
 Cell[TextData[{
- "CommandLineParser is means to be used from Wolfram Language scripts. Such \
+ "CommandLineParser is meant to be used from Wolfram Language scripts. Such \
 scripts should first load CommandLineParser, then specify their arguments and \
 then run ",
  StyleBox["ParseCommandLine", "Input"],
@@ -47,7 +47,7 @@ Cell[CellGroupData[{
 
 Cell[BoxData[{
  RowBox[{
-  RowBox[{"argsSpec", " ", "=", " ", 
+  RowBox[{"spec", " ", "=", " ", 
    RowBox[{"{", 
     RowBox[{
      RowBox[{"{", 
@@ -57,7 +57,7 @@ Cell[BoxData[{
          "]"}]}], "}"}], ",", " ", 
      RowBox[{"{", "}"}]}], "}"}]}], ";"}], "\[IndentingNewLine]", 
  RowBox[{"ParseCommandLine", "[", 
-  RowBox[{"argsSpec", ",", 
+  RowBox[{"spec", ",", 
    RowBox[{"{", "\"\<42\>\"", "}"}]}], "]"}]}], "Input",
  CellLabel->"In[104]:=",
  CellID->1195250426,ExpressionUUID->"0b405265-32fb-419a-b6e7-ae60767ab286"],
@@ -102,7 +102,7 @@ Cell[TextData[{
  " argument ",
  StyleBox["spec", "Input"],
  " has the form ",
- StyleBox["{posArgSpecs,optArgSpecs,helpHeader}", "Input"],
+ StyleBox["{posArgSpecs,optArgSpecs,helpHeader} ", "Input"],
  "or just ",
  StyleBox["{posArgSpecs,optArgSpecs}", "Input"],
  StyleBox[":", "MathCaption"]
@@ -120,8 +120,10 @@ form ", "MathCaption"],
  StyleBox[" is a string. Default values can be specified by using ", 
   "MathCaption"],
  StyleBox["{argName, default} -> argSpec ", "Input"],
- StyleBox["instead. Positional arguments without defaults cannot appear after \
-positional arguments with defaults.", "MathCaption"]
+ StyleBox["instead, where ", "MathCaption"],
+ StyleBox["default", "Input"],
+ StyleBox[" is a string . Positional arguments without defaults cannot appear \
+after positional arguments with defaults.", "MathCaption"]
 }], "Item",
  CellID->807962465,ExpressionUUID->"588a43c9-0090-400c-b7ff-6179e8f18c77"],
 
@@ -175,7 +177,7 @@ lower-case equivalents\>\""}], "]"}]}], ",",
        "\"\<Integer\>\"", ",", 
         "\"\<Any sequence of positive integers, including none\>\""}], 
        "]"}]}]}], "\[IndentingNewLine]", "}"}]}], ";"}]], "Input",
- CellLabel->"In[276]:=",
+ CellLabel->"In[3]:=",
  CellID->2129001455,ExpressionUUID->"c12f2d8a-9569-4265-8f85-1c2e650c1097"],
 
 Cell[BoxData[
@@ -199,14 +201,14 @@ Cell[BoxData[
       
       RowBox[{"BooleanSpec", "[", "\"\<A boolean\>\"", "]"}]}]}], 
     "\[IndentingNewLine]", "}"}]}], ";"}]], "Input",
- CellLabel->"In[277]:=",
+ CellLabel->"In[4]:=",
  CellID->1124328272,ExpressionUUID->"fb186162-9f9a-4db6-ad23-c3f3cb0275b3"],
 
 Cell[BoxData[
  RowBox[{
   RowBox[{"helpHeader", "=", "\"\<Welcome to my script!\>\""}], 
   ";"}]], "Input",
- CellLabel->"In[108]:=",
+ CellLabel->"In[5]:=",
  CellID->809878666,ExpressionUUID->"4712732d-f210-46d3-afe8-5a13c8006521"],
 
 Cell[BoxData[
@@ -215,20 +217,19 @@ Cell[BoxData[
    RowBox[{"{", 
     RowBox[{"posArgSpecs", ",", "optArgSpecs", ",", "helpHeader"}], "}"}]}], 
   ";"}]], "Input",
- CellLabel->"In[109]:=",
+ CellLabel->"In[6]:=",
  CellID->1920330154,ExpressionUUID->"adb65f65-d111-469e-a70a-bc2bcaf35dc9"]
 }, Open  ]],
 
 Cell[CellGroupData[{
 
 Cell[TextData[{
- "The command line arguments provided by the user are expected to have the \
-form ",
- StyleBox["pos-arg-1 pos-arg-2 --opt-1=xxx --opt2=yyy", "Program"],
- ", with all the positional arguments in the correct order first and all the \
-desired optional arguments in any order after:"
+ "When providing user input, positional argument should appear in the correct \
+order followed by the desired optional settings. Optional arguments are \
+passed as ",
+ StyleBox["--opt-name=...:", "Program"]
 }], "Text",
- CellID->562602704,ExpressionUUID->"3e1634a6-1536-4211-8886-0fcf5bf791f4"],
+ CellID->244040381,ExpressionUUID->"51d12097-27c5-49fe-b3c5-8c6b301d744e"],
 
 Cell[CellGroupData[{
 
@@ -239,7 +240,7 @@ Cell[BoxData[
     RowBox[{
     "\"\<hello\>\"", ",", "\"\<none\>\"", ",", "\"\<5\>\"", ",", 
      "\"\<--my-numeric-opt=0.41\>\""}], "}"}]}], "]"}]], "Input",
- CellLabel->"In[278]:=",
+ CellLabel->"In[7]:=",
  CellID->844614861,ExpressionUUID->"13f942d0-ed3c-406a-91d9-632e2f326ab3"],
 
 Cell[BoxData[
@@ -256,9 +257,21 @@ Cell[BoxData[
      RowBox[{"\<\"my-numeric-opt\"\>", "\[Rule]", "0.41`"}], ",", 
      RowBox[{"\<\"my-boolean-opt\"\>", "\[Rule]", "False"}]}], 
     "\[RightAssociation]"}]}], "}"}]], "Output",
- CellLabel->"Out[278]=",
- CellID->672736176,ExpressionUUID->"af92e896-dd9a-4cf1-b6d3-b7ad67f248b6"]
+ CellLabel->"Out[7]=",
+ CellID->96728299,ExpressionUUID->"2dd6db6b-2aa2-45db-a0a7-d71f8b867a8a"]
 }, Open  ]]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["\<\
+If the above code was used in a script called MyScript.m, the command line \
+call equivalent of the above example would be e.g.:\
+\>", "Text",
+ CellID->1140765734,ExpressionUUID->"3aabedb3-e9f4-48bb-9989-60fc022dc702"],
+
+Cell["math -script MyScript.m hello none 5 --my-numeric-opt=0.41", "Program",
+ CellID->981109142,ExpressionUUID->"e87c0060-bccc-458e-b714-ab3cd11fe420"]
 }, Open  ]],
 
 Cell[CellGroupData[{
@@ -827,9 +840,8 @@ Cell["High-level argument helpers", "Subsection",
 Cell[CellGroupData[{
 
 Cell["\<\
-High level helpers which create argument specifications are available for the \
-most common cases. These helpers are just functions that output low-level \
-specifications described above, e.g.\
+The high level helpers are simple functions which output low level argument \
+specifications for the most common use cases. An example is:\
 \>", "Text",
  CellID->718163995,ExpressionUUID->"3c58fd92-3ad2-4f6f-9b24-036631e2e79d"],
 
@@ -1343,7 +1355,7 @@ Cell[BoxData[{
   RowBox[{"fullSpec", "=", 
    RowBox[{"{", 
     RowBox[{"posArgSpec", ",", "optArgSpec"}], "}"}]}], ";"}]}], "Input",
- CellLabel->"In[307]:=",
+ CellLabel->"In[10]:=",
  CellID->1481142504,ExpressionUUID->"acac090e-2d03-435b-b37f-673b25046f2f"],
 
 Cell[CellGroupData[{
@@ -1356,7 +1368,7 @@ Cell[BoxData[
     "\"\<false\>\"", ",", "\"\<false\>\"", ",", "\"\<true\>\"", ",", 
      "\"\<--opt-bool=true\>\"", ",", "\"\<--opt-bool=false\>\""}], "}"}]}], 
   "]"}]], "Input",
- CellLabel->"In[310]:=",
+ CellLabel->"In[13]:=",
  CellID->1598441356,ExpressionUUID->"9970edbd-cde6-46a0-b9b5-02ac818fdf77"],
 
 Cell[BoxData[
@@ -1372,8 +1384,8 @@ Cell[BoxData[
      RowBox[{"{", 
       RowBox[{"True", ",", "False"}], "}"}]}], "\[RightAssociation]"}]}], 
   "}"}]], "Output",
- CellLabel->"Out[310]=",
- CellID->506845502,ExpressionUUID->"6d7dfcbc-1bfa-430e-8024-8d8d26a8030f"]
+ CellLabel->"Out[13]=",
+ CellID->1232494520,ExpressionUUID->"2cc64eb2-5a69-4616-8e84-e91c6cc73301"]
 }, Open  ]]
 }, Open  ]],
 
@@ -1391,7 +1403,7 @@ Cell[BoxData[
  RowBox[{"ParseCommandLine", "[", 
   RowBox[{"fullSpec", ",", " ", 
    RowBox[{"{", "}"}]}], "]"}]], "Input",
- CellLabel->"In[311]:=",
+ CellLabel->"In[14]:=",
  CellID->414840641,ExpressionUUID->"2fc6d79b-24be-407e-a257-8b11817eb74d"],
 
 Cell[BoxData[
@@ -1403,8 +1415,8 @@ Cell[BoxData[
    RowBox[{"\[LeftAssociation]", 
     RowBox[{"\<\"opt-bool\"\>", "\[Rule]", 
      RowBox[{"{", "}"}]}], "\[RightAssociation]"}]}], "}"}]], "Output",
- CellLabel->"Out[311]=",
- CellID->741665453,ExpressionUUID->"e452fb87-3f4b-4615-9d66-0db7555a35bd"]
+ CellLabel->"Out[14]=",
+ CellID->776075125,ExpressionUUID->"5e22cefe-1ba5-4a87-bdcd-8074a499e146"]
 }, Open  ]]
 }, Open  ]],
 
@@ -1414,7 +1426,9 @@ Cell[TextData[{
  "Thus it follows that variadic arguments cannot have defaults: a \
 specification of the form ",
  StyleBox["{name, default} -> spec", "Input"],
- " will be rejected if spec is variadic:"
+ " will be rejected if ",
+ StyleBox["spec", "Input"],
+ " is variadic:"
 }], "Text",
  CellID->942659506,ExpressionUUID->"57e96940-b664-48cd-b346-8675592bf5ec"],
 
@@ -1426,7 +1440,7 @@ Cell[BoxData[{
    RowBox[{"{", 
     RowBox[{
      RowBox[{"{", 
-      RowBox[{"\"\<pos-bool\>\"", ",", "False"}], "}"}], "->", 
+      RowBox[{"\"\<pos-bool\>\"", ",", "\"\<false\>\""}], "}"}], "->", 
      RowBox[{"BooleanSpec", "[", 
       RowBox[{"\"\<\>\"", ",", 
        RowBox[{"\"\<Variadic\>\"", "->", "True"}]}], "]"}]}], "}"}]}], 
@@ -1436,36 +1450,24 @@ Cell[BoxData[{
    RowBox[{"{", 
     RowBox[{"posArgSpec", ",", " ", 
      RowBox[{"{", "}"}]}], "}"}], ",", 
-   RowBox[{"{", "\"\<anything\>\"", "}"}]}], "]"}]}], "Input",
- CellLabel->"In[312]:=",
+   RowBox[{"{", "\"\<true\>\"", "}"}]}], "]"}]}], "Input",
+ CellLabel->"In[65]:=",
  CellID->109388535,ExpressionUUID->"6a642394-8e47-4b3f-a233-cbd34f0c8e90"],
 
 Cell[BoxData[
  TemplateBox[{
-  "ParseCommandLine", "badspec", 
-   "\"\\!\\(\\*RowBox[{\\\"\\\\\\\"Positional\\\\\\\"\\\"}]\\) argument \
-specification \\!\\(\\*RowBox[{RowBox[{\\\"{\\\", \
-RowBox[{\\\"\\\\\\\"pos-bool\\\\\\\"\\\", \\\",\\\", \\\"False\\\"}], \\\"}\\\
-\"}], \\\"\[Rule]\\\", RowBox[{\\\"{\\\", \
-RowBox[{RowBox[{\\\"\\\\\\\"true\\\\\\\"\\\", \\\"|\\\", \
-\\\"\\\\\\\"false\\\\\\\"\\\", \\\"|\\\", \\\"\\\\\\\"True\\\\\\\"\\\", \\\"|\
-\\\", \\\"\\\\\\\"False\\\\\\\"\\\"}], \\\",\\\", RowBox[{RowBox[{\\\"Replace\
-\\\", \\\"[\\\", RowBox[{\\\"#1\\\", \\\",\\\", RowBox[{\\\"{\\\", \
-RowBox[{RowBox[{RowBox[{\\\"\\\\\\\"true\\\\\\\"\\\", \\\"|\\\", \
-\\\"\\\\\\\"True\\\\\\\"\\\"}], \\\"\[Rule]\\\", \\\"True\\\"}], \\\",\\\", \
-RowBox[{RowBox[{\\\"\\\\\\\"false\\\\\\\"\\\", \\\"|\\\", \\\"\\\\\\\"False\\\
-\\\\\"\\\"}], \\\"\[Rule]\\\", \\\"False\\\"}]}], \\\"}\\\"}]}], \\\"]\\\"}], \
-\\\"&\\\"}], \\\",\\\", RowBox[{\\\"True\\\", \\\"&\\\"}], \\\",\\\", \
-\\\"True\\\", \\\",\\\", \\\"\\\\\\\"\\\\\\\"\\\"}], \\\"}\\\"}]}]\\) is not \
-valid.\"", 2, 313, 28, 34434383229564482630, "Local", 
+  "ParseCommandLine", "badvariadic2", 
+   "\"Invalid argument specification: variadic arguments cannot have a \
+default. If nothing is passed they automatically default to an empty list.\"",
+    2, 66, 13, 34434952648196997447, "Local", 
    "Wolfram`CommandLineParser`ParseCommandLine"},
   "MessageTemplate2"]], "Message", "MSG",
- CellLabel->"During evaluation of In[312]:=",
- CellID->2068752813,ExpressionUUID->"65c9f6dd-8e9f-439a-93da-a03cb0cdc358"],
+ CellLabel->"During evaluation of In[65]:=",
+ CellID->1063285293,ExpressionUUID->"ceb8aef7-6615-479e-b6f7-3fb1b0cf7472"],
 
 Cell[BoxData["$Aborted"], "Output",
- CellLabel->"Out[313]=",
- CellID->1858814321,ExpressionUUID->"87f38f4b-d9c2-49a0-b27b-d44fd80cc3e8"]
+ CellLabel->"Out[66]=",
+ CellID->1055865968,ExpressionUUID->"591ca790-3229-46c7-b56b-5ed389cbf066"]
 }, Open  ]]
 }, Open  ]],
 
@@ -1558,7 +1560,7 @@ Cell["XXXX", "Keywords",
 }, Open  ]]
 },
 WindowSize->{693.75, 762},
-WindowMargins->{{Automatic, 0}, {Automatic, 0}},
+WindowMargins->{{312.75, Automatic}, {Automatic, 0}},
 PrivateNotebookOptions->{"FileOutlineCache"->False},
 TaggingRules-><|"Paclet" -> "Wolfram/CommandLineParser"|>,
 TrackCellChangeTimes->False,
@@ -1568,3 +1570,4 @@ StyleDefinitions->FrontEnd`FileName[{"Wolfram"}, "TechNotePageStylesExt.nb",
   CharacterEncoding -> "UTF-8"],
 ExpressionUUID->"90b01130-abb2-47d5-af62-c9f640dba0cd"
 ]
+
